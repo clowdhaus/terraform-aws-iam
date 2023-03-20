@@ -15,7 +15,7 @@ locals {
 }
 
 ################################################################################
-# IAM Assumable Role - Instance Profile
+# IAM Assumable Role
 ################################################################################
 
 module "iam_assumable_role_instance_profile" {
@@ -55,10 +55,6 @@ module "iam_assumable_role_instance_profile" {
   tags = local.tags
 }
 
-################################################################################
-# IAM Assumable Role - Conditions
-################################################################################
-
 module "iam_assumable_role_conditions" {
   source = "../../modules/iam-assumable-role"
 
@@ -89,10 +85,6 @@ module "iam_assumable_role_conditions" {
 
   tags = local.tags
 }
-
-################################################################################
-# IAM Assumable Role - Multiple
-################################################################################
 
 module "iam_assumable_roles" {
   source = "../../modules/iam-assumable-role"
@@ -144,6 +136,12 @@ module "iam_assumable_roles" {
   policies = each.value.policies
 
   tags = local.tags
+}
+
+module "iam_assumable_role_disabled" {
+  source = "../../modules/iam-assumable-role"
+
+  create = false
 }
 
 ################################################################################

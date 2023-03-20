@@ -1,79 +1,83 @@
-variable "create_role" {
-  description = "Whether to create a role"
+variable "create" {
+  description = "Controls if resources should be created (affects all resources)"
   type        = bool
-  default     = false
-}
-
-variable "provider_url" {
-  description = "URL of the OIDC Provider. Use provider_urls to specify several URLs."
-  type        = string
-  default     = ""
-}
-
-variable "provider_urls" {
-  description = "List of URLs of the OIDC Providers"
-  type        = list(string)
-  default     = []
-}
-
-variable "aws_account_id" {
-  description = "The AWS account ID where the OIDC provider lives, leave empty to use the account for the AWS provider"
-  type        = string
-  default     = ""
+  default     = true
 }
 
 variable "tags" {
-  description = "A map of tags to add to IAM role resources"
+  description = "A map of tags to add to all resources"
   type        = map(string)
   default     = {}
 }
 
-variable "role_name" {
-  description = "IAM role name"
+################################################################################
+# IAM Role
+################################################################################
+
+variable "name" {
+  description = "Name to use on IAM role created"
   type        = string
   default     = null
 }
 
-variable "role_name_prefix" {
-  description = "IAM role name prefix"
+variable "name_prefix" {
+  description = "Name prefix to use on IAM role created"
   type        = string
   default     = null
 }
 
-variable "role_description" {
-  description = "IAM Role description"
-  type        = string
-  default     = ""
-}
-
-variable "role_path" {
+variable "path" {
   description = "Path of IAM role"
   type        = string
   default     = "/"
 }
 
-variable "role_permissions_boundary_arn" {
-  description = "Permissions boundary ARN to use for IAM role"
+variable "description" {
+  description = "Description of the role"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "max_session_duration" {
-  description = "Maximum CLI/API session duration in seconds between 3600 and 43200"
+  description = "Maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours"
   type        = number
-  default     = 3600
+  default     = null
 }
 
-variable "role_policy_arns" {
-  description = "List of ARNs of IAM policies to attach to IAM role"
-  type        = list(string)
+variable "permissions_boundary" {
+  description = "ARN of the policy that is used to set the permissions boundary for the IAM role"
+  type        = string
+  default     = null
+}
+
+variable "allow_self_assume_role" {
+  description = "Determines whether to allow the role to be [assume itself](https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/)"
+  type        = bool
+  default     = false
+}
+
+variable "assume_role_policy_statements" {
+  description = "List of IAM policy [statements](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document#statement) for for trusted assume role policy"
+  type        = any
   default     = []
 }
 
-variable "number_of_role_policy_arns" {
-  description = "Number of IAM policies to attach to IAM role"
-  type        = number
+variable "policies" {
+  description = "Map of IAM policies to be added to the IAM role"
+  type        = map(string)
+  default     = {}
+}
+
+variable "oidc_account_id" {
+  description = "An overriding AWS account ID where the OIDC provider lives; leave empty to use the current account ID for the AWS provider"
+  type        = string
   default     = null
+}
+
+variable "oidc_provider_urls" {
+  description = "List of URLs of the OIDC Providers"
+  type        = list(string)
+  default     = []
 }
 
 variable "oidc_fully_qualified_subjects" {
@@ -92,16 +96,4 @@ variable "oidc_fully_qualified_audiences" {
   description = "The audience to be added to the role policy. Set to sts.amazonaws.com for cross-account assumable role. Leave empty otherwise."
   type        = set(string)
   default     = []
-}
-
-variable "force_detach_policies" {
-  description = "Whether policies should be detached from this role when destroying"
-  type        = bool
-  default     = false
-}
-
-variable "allow_self_assume_role" {
-  description = "Determines whether to allow the role to be [assume itself](https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/)"
-  type        = bool
-  default     = false
 }

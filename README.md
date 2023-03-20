@@ -30,21 +30,30 @@ module "iam_account" {
 module "iam_assumable_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
 
-  trusted_role_arns = [
-    "arn:aws:iam::307990089504:root",
-    "arn:aws:iam::835367859851:user/anton",
+  name = "example"
+
+  assume_role_policy_statements = [
+    {
+      sid = "TrustRoleAndServiceToAssume"
+      principals = [{
+        type = "AWS"
+        identifiers = [
+          "arn:aws:iam::835367859851:user/anton",
+        ]
+      }]
+      conditions = [{
+        test     = "StringEquals"
+        variable = "sts:ExternalId"
+        values   = ["some-secret-id"]
+      }]
+    }
   ]
 
-  create_role = true
-
-  role_name         = "custom"
-  role_requires_mfa = true
-
-  custom_role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonCognitoReadOnly",
-    "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess",
-  ]
-  number_of_custom_role_policy_arns = 2
+  policies = {
+    AmazonCognitoReadOnly      = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+    AlexaForBusinessFullAccess = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
+    custom                     = aws_iam_policy.this.arn
+  }
 }
 ```
 
@@ -54,20 +63,17 @@ module "iam_assumable_role" {
 module "iam_assumable_role_with_oidc" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
 
-  create_role = true
+  name = "example"
 
-  role_name = "role-with-oidc"
-
-  tags = {
-    Role = "role-with-oidc"
-  }
-
-  provider_url = "oidc.eks.eu-west-1.amazonaws.com/id/BA9E170D464AF7B92084EF72A69B9DC8"
-
-  role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+  oidc_provider_urls = ["oidc.eks.eu-west-1.amazonaws.com/id/AA9E170D464AF7B92084EF72A69B9DC8"]
+  oidc_fully_qualified_subjects = [
+    "system:serviceaccount:default:sa1",
+    "system:serviceaccount:default:sa2",
   ]
-  number_of_role_policy_arns = 1
+
+  policies = {
+    AmazonEKS_CNI_Policy = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  }
 }
 ```
 

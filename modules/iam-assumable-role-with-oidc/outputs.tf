@@ -1,19 +1,18 @@
-output "iam_role_arn" {
-  description = "ARN of IAM role"
-  value       = try(aws_iam_role.this[0].arn, "")
+################################################################################
+# IAM Role
+################################################################################
+
+output "name" {
+  description = "The name of the IAM role"
+  value       = try(aws_iam_role.this[0].name, null)
 }
 
-output "iam_role_name" {
-  description = "Name of IAM role"
-  value       = try(aws_iam_role.this[0].name, "")
+output "arn" {
+  description = "The Amazon Resource Name (ARN) specifying the IAM role"
+  value       = try(aws_iam_role.this[0].arn, null)
 }
 
-output "iam_role_path" {
-  description = "Path of IAM role"
-  value       = try(aws_iam_role.this[0].path, "")
-}
-
-output "iam_role_unique_id" {
-  description = "Unique ID of IAM role"
-  value       = try(aws_iam_role.this[0].unique_id, "")
+output "unique_id" {
+  description = "Stable and unique string identifying the IAM role"
+  value       = try(aws_iam_role.this[0].unique_id, null)
 }

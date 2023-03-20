@@ -16,7 +16,11 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 - `iam-assumable-role`
     - The use of individual variables to control/manipulate the assume role trust policy have been replaced by a generic `assume_role_policy_statements` variable. This allows for any number of custom statements to be added to the role's trust policy.
-    - `custom_role_policy_arns` has been renmaed to `policies` and now accepts a map of `name`: `policy-arn` pairs; this allows for both existing policies and policies that will get created at the same time as the role. This also replaces the admin, readonly, and poweruser policy ARN variables and their associated `attach_*_policy` variables.
+    - `custom_role_policy_arns` has been renamed to `policies` and now accepts a map of `name`: `policy-arn` pairs; this allows for both existing policies and policies that will get created at the same time as the role. This also replaces the admin, readonly, and poweruser policy ARN variables and their associated `attach_*_policy` variables.
+    - Default create conditional is now `true` instead of `false`
+    - `force_detach_policies` has been removed; this is now always `true`
+- `iam-assumable-role-with-oidc`
+    - `custom_role_policy_arns` has been renamed to `policies` and now accepts a map of `name`: `policy-arn` pairs; this allows for both existing policies and policies that will get created at the same time as the role.
     - Default create conditional is now `true` instead of `false`
     - `force_detach_policies` has been removed; this is now always `true`
 
@@ -37,6 +41,9 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `readonly_role_policy_arn` & `attach_readonly_policy`
         - `force_detach_policies`
         - `role_sts_externalid`
+    - `iam-assumable-role-with-oidc`
+        - `force_detach_policies`
+        - `number_of_custom_role_policy_arns`
 
 2. Renamed variables:
 
@@ -48,11 +55,21 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `role_path` -> `path`
         - `role_permissions_boundary_arn` -> `permissions_boundary_arn`
         - `custom_role_policy_arns` -> `policies`
+    - `iam-assumable-role-with-oidc`
+        - `create_role` -> `create`
+        - `role_name` -> `name`
+        - `role_name_prefix` -> `name_prefix`
+        - `role_description` -> `description`
+        - `role_path` -> `path`
+        - `role_permissions_boundary_arn` -> `permissions_boundary_arn`
+        - `custom_role_policy_arns` -> `policies`
 
 3. Added variables:
 
     - `iam-assumable-role`
-        - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed.
+        - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
+    - `iam-assumable-role-with-oidc`
+        - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
 
 4. Removed outputs:
 
@@ -61,6 +78,9 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `role_requires_mfa`
         - `iam_instance_profile_path`
         - `role_sts_externalid`
+    - `iam-assumable-role-with-oidc`
+        - `iam_role_path`
+        - `provider_url` (use `oidc_provider_urls` instead)
 
 5. Renamed outputs:
 
@@ -72,6 +92,11 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `iam_instance_profile_id` -> `instance_profile_id`
         - `iam_instance_profile_name` -> `instance_profile_name`
         - `iam_instance_profile_unique_id` -> `instance_profile_unique_id`
+    - `iam-assumable-role-with-oidc`
+        - `iam_role_arn` -> `arn`
+        - `iam_role_name` -> `name`
+        - `iam_role_unique_id` -> `unique_id`
+        - `aws_account_id` -> `oidc_account_id`
 
 6. Added outputs:
 

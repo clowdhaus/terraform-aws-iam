@@ -2,51 +2,40 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-###############################
-# IAM assumable role for admin
-###############################
-module "iam_assumable_role_admin" {
-  source = "../../modules/iam-assumable-role-with-oidc"
-
-  create_role = true
-
-  role_name = "role-with-oidc"
+locals {
+  name = "ex-${basename(path.cwd)}"
 
   tags = {
-    Role = "role-with-oidc"
+    Example    = local.name
+    GithubRepo = "terraform-aws-iam"
+    GithubOrg  = "terraform-aws-modules"
   }
-
-  provider_url  = "oidc.eks.eu-west-1.amazonaws.com/id/BA9E170D464AF7B92084EF72A69B9DC8"
-  provider_urls = ["oidc.eks.eu-west-1.amazonaws.com/id/AA9E170D464AF7B92084EF72A69B9DC8"]
-
-  role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-  ]
-
-  oidc_fully_qualified_subjects = ["system:serviceaccount:default:sa1", "system:serviceaccount:default:sa2"]
 }
 
-#####################################
-# IAM assumable role with self assume
-#####################################
-module "iam_assumable_role_self_assume" {
+################################################################################
+# IAM Assumable Role w/ OIDC
+################################################################################
+
+module "iam_assumable_role" {
   source = "../../modules/iam-assumable-role-with-oidc"
 
-  create_role            = true
-  allow_self_assume_role = true
+  name = local.name
 
-  role_name = "role-with-oidc-self-assume"
-
-  tags = {
-    Role = "role-with-oidc-self-assume"
-  }
-
-  provider_url  = "oidc.eks.eu-west-1.amazonaws.com/id/BA9E170D464AF7B92084EF72A69B9DC8"
-  provider_urls = ["oidc.eks.eu-west-1.amazonaws.com/id/AA9E170D464AF7B92084EF72A69B9DC8"]
-
-  role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+  oidc_provider_urls = ["oidc.eks.eu-west-1.amazonaws.com/id/AA9E170D464AF7B92084EF72A69B9DC8"]
+  oidc_fully_qualified_subjects = [
+    "system:serviceaccount:default:sa1",
+    "system:serviceaccount:default:sa2",
   ]
 
-  oidc_fully_qualified_subjects = ["system:serviceaccount:default:sa1", "system:serviceaccount:default:sa2"]
+  policies = {
+    AmazonEKS_CNI_Policy = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  }
+
+  tags = local.tags
+}
+
+module "iam_assumable_role_disabled" {
+  source = "../../modules/iam-assumable-role-with-oidc"
+
+  create = false
 }

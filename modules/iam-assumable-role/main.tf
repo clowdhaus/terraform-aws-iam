@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 
 locals {
-  role_name_condition = var.name != null ? var.name : "${var.name_prefix}*"
+  name_condition = var.name != null ? var.name : "${var.name_prefix}*"
 }
 
 ################################################################################
@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "assume_role" {
       condition {
         test     = "ArnLike"
         variable = "aws:PrincipalArn"
-        values   = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role${var.path}${local.role_name_condition}"]
+        values   = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role${var.path}${local.name_condition}"]
       }
     }
   }
