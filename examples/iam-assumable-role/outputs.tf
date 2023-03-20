@@ -1,29 +1,77 @@
-output "iam_role_arn" {
-  description = "ARN of IAM role"
-  value       = module.iam_assumable_role_admin.iam_role_arn
+################################################################################
+# IAM Assumable Role - Instance Profile
+################################################################################
+
+output "instance_profile_iam_role_name" {
+  description = "The name of the IAM role"
+  value       = module.iam_assumable_role_instance_profile.name
 }
 
-output "iam_role_name" {
-  description = "Name of IAM role"
-  value       = module.iam_assumable_role_admin.iam_role_name
+output "instance_profile_iam_role_arn" {
+  description = "The Amazon Resource Name (ARN) specifying the IAM role"
+  value       = module.iam_assumable_role_instance_profile.arn
 }
 
-output "iam_role_path" {
-  description = "Path of IAM role"
-  value       = module.iam_assumable_role_admin.iam_role_path
+output "instance_profile_iam_role_unique_id" {
+  description = "Stable and unique string identifying the IAM role"
+  value       = module.iam_assumable_role_instance_profile.unique_id
 }
 
-output "iam_role_unique_id" {
-  description = "Unique ID of IAM role"
-  value       = module.iam_assumable_role_admin.iam_role_unique_id
+output "instance_profile_iam_instance_profile_arn" {
+  description = "ARN assigned by AWS to the instance profile"
+  value       = module.iam_assumable_role_instance_profile.instance_profile_arn
 }
 
-output "role_requires_mfa" {
-  description = "Whether admin IAM role requires MFA"
-  value       = module.iam_assumable_role_admin.role_requires_mfa
+output "instance_profile_iam_instance_profile_id" {
+  description = "Instance profile's ID"
+  value       = module.iam_assumable_role_instance_profile.instance_profile_id
 }
 
-output "iam_instance_profile_id" {
-  description = "IAM Instance profile's ID."
-  value       = module.iam_assumable_role_admin.iam_instance_profile_id
+output "instance_profile_iam_instance_profile_name" {
+  description = "Name of IAM instance profile"
+  value       = module.iam_assumable_role_instance_profile.instance_profile_name
+}
+
+output "instance_profile_iam_instance_profile_unique_id" {
+  description = "Stable and unique string identifying the IAM instance profile"
+  value       = module.iam_assumable_role_instance_profile.instance_profile_unique_id
+}
+
+################################################################################
+# IAM Assumable Role - Conditions
+################################################################################
+
+output "conditions_iam_role_name" {
+  description = "The name of the IAM role"
+  value       = module.iam_assumable_role_conditions.name
+}
+
+output "conditions_iam_role_arn" {
+  description = "The Amazon Resource Name (ARN) specifying the IAM role"
+  value       = module.iam_assumable_role_conditions.arn
+}
+
+output "conditions_iam_role_unique_id" {
+  description = "Stable and unique string identifying the IAM role"
+  value       = module.iam_assumable_role_conditions.unique_id
+}
+
+output "conditions_iam_instance_profile_arn" {
+  description = "ARN assigned by AWS to the instance profile"
+  value       = module.iam_assumable_role_conditions.instance_profile_arn
+}
+
+output "conditions_iam_instance_profile_id" {
+  description = "Instance profile's ID"
+  value       = module.iam_assumable_role_conditions.instance_profile_id
+}
+
+output "conditions_iam_instance_profile_name" {
+  description = "Name of IAM instance profile"
+  value       = module.iam_assumable_role_conditions.instance_profile_name
+}
+
+output "conditions_iam_instance_profile_unique_id" {
+  description = "Stable and unique string identifying the IAM instance profile"
+  value       = module.iam_assumable_role_conditions.instance_profile_unique_id
 }

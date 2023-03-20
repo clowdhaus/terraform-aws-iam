@@ -2,14 +2,15 @@ data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 
 locals {
-  account_id          = data.aws_caller_identity.current.account_id
-  partition           = data.aws_partition.current.partition
-  role_sts_externalid = flatten([var.role_sts_externalid])
-  role_name_condition = var.role_name != null ? var.role_name : "${var.role_name_prefix}*"
+  role_name_condition = var.name != null ? var.name : "${var.name_prefix}*"
 }
+
+################################################################################
+# IAM Role
+################################################################################
 
 data "aws_iam_policy_document" "assume_role" {
-  count = var.custom_role_trust_policy == "" && var.role_requires_mfa ? 0 : 1
+  count = var.create ? 1 : 0
 
   dynamic "statement" {
     # https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/
@@ -28,153 +29,92 @@ data "aws_iam_policy_document" "assume_role" {
       condition {
         test     = "ArnLike"
         variable = "aws:PrincipalArn"
-        values   = ["arn:${local.partition}:iam::${local.account_id}:role${var.role_path}${local.role_name_condition}"]
+        values   = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role${var.path}${local.role_name_condition}"]
       }
     }
   }
-
-  statement {
-    effect  = "Allow"
-    actions = var.trusted_role_actions
-
-    principals {
-      type        = "AWS"
-      identifiers = var.trusted_role_arns
-    }
-
-    principals {
-      type        = "Service"
-      identifiers = var.trusted_role_services
-    }
-
-    dynamic "condition" {
-      for_each = length(local.role_sts_externalid) != 0 ? [true] : []
-      content {
-        test     = "StringEquals"
-        variable = "sts:ExternalId"
-        values   = local.role_sts_externalid
-      }
-    }
-  }
-}
-
-data "aws_iam_policy_document" "assume_role_with_mfa" {
-  count = var.custom_role_trust_policy == "" && var.role_requires_mfa ? 1 : 0
 
   dynamic "statement" {
-    # https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/
-    for_each = var.allow_self_assume_role ? [1] : []
+    for_each = var.assume_role_policy_statements
 
     content {
-      sid     = "ExplicitSelfRoleAssumption"
-      effect  = "Allow"
-      actions = ["sts:AssumeRole"]
+      sid           = try(statement.value.sid, null)
+      actions       = try(statement.value.actions, ["sts:AssumeRole"])
+      not_actions   = try(statement.value.not_actions, null)
+      effect        = try(statement.value.effect, null)
+      resources     = try(statement.value.resources, null)
+      not_resources = try(statement.value.not_resources, null)
 
-      principals {
-        type        = "AWS"
-        identifiers = ["*"]
+      dynamic "principals" {
+        for_each = try(statement.value.principals, [])
+
+        content {
+          type        = principals.value.type
+          identifiers = principals.value.identifiers
+        }
       }
 
-      condition {
-        test     = "ArnLike"
-        variable = "aws:PrincipalArn"
-        values   = ["arn:${local.partition}:iam::${local.account_id}:role${var.role_path}${local.role_name_condition}"]
+      dynamic "not_principals" {
+        for_each = try(statement.value.not_principals, [])
+
+        content {
+          type        = not_principals.value.type
+          identifiers = not_principals.value.identifiers
+        }
       }
-    }
-  }
 
-  statement {
-    effect  = "Allow"
-    actions = var.trusted_role_actions
+      dynamic "condition" {
+        for_each = try(statement.value.conditions, [])
 
-    principals {
-      type        = "AWS"
-      identifiers = var.trusted_role_arns
-    }
-
-    principals {
-      type        = "Service"
-      identifiers = var.trusted_role_services
-    }
-
-    condition {
-      test     = "Bool"
-      variable = "aws:MultiFactorAuthPresent"
-      values   = ["true"]
-    }
-
-    condition {
-      test     = "NumericLessThan"
-      variable = "aws:MultiFactorAuthAge"
-      values   = [var.mfa_age]
-    }
-
-    dynamic "condition" {
-      for_each = length(local.role_sts_externalid) != 0 ? [true] : []
-      content {
-        test     = "StringEquals"
-        variable = "sts:ExternalId"
-        values   = local.role_sts_externalid
+        content {
+          test     = condition.value.test
+          values   = condition.value.values
+          variable = condition.value.variable
+        }
       }
     }
   }
 }
 
 resource "aws_iam_role" "this" {
-  count = var.create_role ? 1 : 0
+  count = var.create ? 1 : 0
 
-  name                 = var.role_name
-  name_prefix          = var.role_name_prefix
-  path                 = var.role_path
-  max_session_duration = var.max_session_duration
-  description          = var.role_description
+  name        = var.name
+  name_prefix = var.name_prefix
+  path        = var.path
+  description = var.description
 
-  force_detach_policies = var.force_detach_policies
-  permissions_boundary  = var.role_permissions_boundary_arn
-
-  assume_role_policy = coalesce(
-    var.custom_role_trust_policy,
-    try(data.aws_iam_policy_document.assume_role_with_mfa[0].json,
-      data.aws_iam_policy_document.assume_role[0].json
-    )
-  )
+  assume_role_policy    = data.aws_iam_policy_document.assume_role[0].json
+  max_session_duration  = var.max_session_duration
+  permissions_boundary  = var.permissions_boundary
+  force_detach_policies = true
 
   tags = var.tags
 }
 
-resource "aws_iam_role_policy_attachment" "custom" {
-  count = var.create_role ? coalesce(var.number_of_custom_role_policy_arns, length(var.custom_role_policy_arns)) : 0
+resource "aws_iam_role_policy_attachment" "additional" {
+  for_each = { for k, v in var.policies : k => v if var.create }
 
+  policy_arn = each.value
   role       = aws_iam_role.this[0].name
-  policy_arn = element(var.custom_role_policy_arns, count.index)
 }
 
-resource "aws_iam_role_policy_attachment" "admin" {
-  count = var.create_role && var.attach_admin_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = var.admin_role_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "poweruser" {
-  count = var.create_role && var.attach_poweruser_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = var.poweruser_role_policy_arn
-}
-
-resource "aws_iam_role_policy_attachment" "readonly" {
-  count = var.create_role && var.attach_readonly_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = var.readonly_role_policy_arn
-}
+################################################################################
+# IAM Instance Profile
+################################################################################
 
 resource "aws_iam_instance_profile" "this" {
-  count = var.create_role && var.create_instance_profile ? 1 : 0
-  name  = var.role_name
-  path  = var.role_path
-  role  = aws_iam_role.this[0].name
+  count = var.create && var.create_instance_profile ? 1 : 0
+
+  role = aws_iam_role.this[0].name
+
+  name        = var.name
+  name_prefix = var.name_prefix
+  path        = var.path
 
   tags = var.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

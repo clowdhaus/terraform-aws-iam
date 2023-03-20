@@ -64,22 +64,37 @@ module "iam_assumable_roles_in_prod" {
 module "iam_assumable_role_custom" {
   source = "../../modules/iam-assumable-role"
 
-  trusted_role_arns = [
-    "arn:aws:iam::${data.aws_caller_identity.iam.account_id}:root",
-  ]
-
-  create_role = true
-
-  role_name         = "custom"
-  role_requires_mfa = true
-
-  custom_role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonCognitoReadOnly",
-    "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess",
-  ]
-
   providers = {
     aws = aws.production
+  }
+
+  name = "custom"
+
+  assume_role_policy_statements = [
+    {
+      sid = "TrustRoleAndServiceToAssume"
+      principals = [{
+        type        = "AWS"
+        identifiers = ["arn:aws:iam::${data.aws_caller_identity.iam.account_id}:root"]
+      }]
+      conditions = [
+        {
+          test     = "Bool"
+          variable = "aws:MultiFactorAuthPresent"
+          values   = ["true"]
+        },
+        {
+          test     = "NumericLessThan"
+          variable = "aws:MultiFactorAuthAge"
+          values   = [86400]
+        }
+      ]
+    }
+  ]
+
+  policies = {
+    AmazonCognitoReadOnly      = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+    AlexaForBusinessFullAccess = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
   }
 }
 
@@ -125,7 +140,7 @@ module "iam_group_with_assumable_roles_policy_production_custom" {
 
   name = "production-custom"
 
-  assumable_roles = [module.iam_assumable_role_custom.iam_role_arn]
+  assumable_roles = [module.iam_assumable_role_custom.arn]
 
   group_users = [
     module.iam_user2.iam_user_name,

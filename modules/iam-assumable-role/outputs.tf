@@ -1,49 +1,42 @@
-output "iam_role_arn" {
-  description = "ARN of IAM role"
-  value       = try(aws_iam_role.this[0].arn, "")
+################################################################################
+# IAM Role
+################################################################################
+
+output "name" {
+  description = "The name of the IAM role"
+  value       = try(aws_iam_role.this[0].name, null)
 }
 
-output "iam_role_name" {
-  description = "Name of IAM role"
-  value       = try(aws_iam_role.this[0].name, "")
+output "arn" {
+  description = "The Amazon Resource Name (ARN) specifying the IAM role"
+  value       = try(aws_iam_role.this[0].arn, null)
 }
 
-output "iam_role_path" {
-  description = "Path of IAM role"
-  value       = try(aws_iam_role.this[0].path, "")
+output "unique_id" {
+  description = "Stable and unique string identifying the IAM role"
+  value       = try(aws_iam_role.this[0].unique_id, null)
 }
 
-output "iam_role_unique_id" {
-  description = "Unique ID of IAM role"
-  value       = try(aws_iam_role.this[0].unique_id, "")
+################################################################################
+# IAM Instance Profile
+################################################################################
+
+output "instance_profile_arn" {
+  description = "ARN assigned by AWS to the instance profile"
+  value       = try(aws_iam_instance_profile.this[0].arn, null)
 }
 
-output "role_requires_mfa" {
-  description = "Whether IAM role requires MFA"
-  value       = var.role_requires_mfa
+output "instance_profile_id" {
+  description = "Instance profile's ID"
+  value       = try(aws_iam_instance_profile.this[0].id, null)
 }
 
-output "iam_instance_profile_arn" {
-  description = "ARN of IAM instance profile"
-  value       = try(aws_iam_instance_profile.this[0].arn, "")
-}
-
-output "iam_instance_profile_name" {
+output "instance_profile_name" {
   description = "Name of IAM instance profile"
-  value       = try(aws_iam_instance_profile.this[0].name, "")
+  value       = try(aws_iam_instance_profile.this[0].name, null)
 }
 
-output "iam_instance_profile_id" {
-  description = "IAM Instance profile's ID."
-  value       = try(aws_iam_instance_profile.this[0].id, "")
-}
-
-output "iam_instance_profile_path" {
-  description = "Path of IAM instance profile"
-  value       = try(aws_iam_instance_profile.this[0].path, "")
-}
-
-output "role_sts_externalid" {
-  description = "STS ExternalId condition value to use with a role"
-  value       = var.role_sts_externalid
+output "instance_profile_unique_id" {
+  description = "Stable and unique string identifying the IAM instance profile"
+  value       = try(aws_iam_instance_profile.this[0].unique_id, null)
 }
