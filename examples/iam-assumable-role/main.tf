@@ -2,6 +2,8 @@ provider "aws" {
   region = "eu-west-1"
 }
 
+data "aws_caller_identity" "current" {}
+
 locals {
   name = "ex-${basename(path.cwd)}"
 
@@ -84,6 +86,62 @@ module "iam_assumable_role_conditions" {
     AlexaForBusinessFullAccess = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
     custom                     = aws_iam_policy.this.arn
   }
+
+  tags = local.tags
+}
+
+################################################################################
+# IAM Assumable Role - Multiple
+################################################################################
+
+module "iam_assumable_roles" {
+  source = "../../modules/iam-assumable-role"
+
+  for_each = {
+    admin = {
+      trusted_arns = [data.aws_caller_identity.current.arn]
+      policies = {
+        AdministratorAccess = "arn:aws:iam::aws:policy/AdministratorAccess"
+      }
+    }
+    readonly = {
+      trusted_arns = ["arn:aws:iam::835367859851:user/anton"]
+      policies = {
+        ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+      }
+    }
+    poweruser = {
+      trusted_arns    = [data.aws_caller_identity.current.arn]
+      PowerUserAccess = "arn:aws:iam::aws:policy/PowerUserAccess"
+    }
+  }
+
+  name_prefix = "${each.key}-"
+
+  assume_role_policy_statements = [
+    {
+      sid = "TrustRoleAndServiceToAssume"
+      principals = [{
+        type        = "AWS"
+        identifiers = each.value.trusted_arns
+      }]
+
+      conditions = [
+        {
+          test     = "Bool"
+          variable = "aws:MultiFactorAuthPresent"
+          values   = ["true"]
+        },
+        {
+          test     = "NumericLessThan"
+          variable = "aws:MultiFactorAuthAge"
+          values   = [86400]
+        }
+      ]
+    }
+  ]
+
+  policies = each.value.policies
 
   tags = local.tags
 }

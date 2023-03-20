@@ -43,23 +43,6 @@ module "iam_user2" {
 # Several IAM assumable roles (admin, poweruser, readonly) in production AWS account
 # Note: Anyone from IAM account can assume them.
 #####################################################################################
-module "iam_assumable_roles_in_prod" {
-  source = "../../modules/iam-assumable-roles"
-
-  trusted_role_arns = [
-    "arn:aws:iam::${data.aws_caller_identity.iam.account_id}:root",
-  ]
-
-  create_admin_role     = true
-  create_poweruser_role = true
-
-  create_readonly_role       = true
-  readonly_role_requires_mfa = false
-
-  providers = {
-    aws = aws.production
-  }
-}
 
 module "iam_assumable_role_custom" {
   source = "../../modules/iam-assumable-role"
@@ -96,39 +79,6 @@ module "iam_assumable_role_custom" {
     AmazonCognitoReadOnly      = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
     AlexaForBusinessFullAccess = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
   }
-}
-
-################################################################################################
-# IAM group where user1 and user2 are allowed to assume readonly role in production AWS account
-# Note: IAM AWS account is default, so there is no need to specify it here.
-################################################################################################
-module "iam_group_with_assumable_roles_policy_production_readonly" {
-  source = "../../modules/iam-group-with-assumable-roles-policy"
-
-  name = "production-readonly"
-
-  assumable_roles = [module.iam_assumable_roles_in_prod.readonly_iam_role_arn]
-
-  group_users = [
-    module.iam_user1.iam_user_name,
-    module.iam_user2.iam_user_name,
-  ]
-}
-
-################################################################################################
-# IAM group where user1 is allowed to assume admin role in production AWS account
-# Note: IAM AWS account is default, so there is no need to specify it here.
-################################################################################################
-module "iam_group_with_assumable_roles_policy_production_admin" {
-  source = "../../modules/iam-group-with-assumable-roles-policy"
-
-  name = "production-admin"
-
-  assumable_roles = [module.iam_assumable_roles_in_prod.admin_iam_role_arn]
-
-  group_users = [
-    module.iam_user1.iam_user_name,
-  ]
 }
 
 ################################################################################################

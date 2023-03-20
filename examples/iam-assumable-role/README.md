@@ -36,12 +36,14 @@ Run `terraform destroy` when you don't need these resources.
 |------|--------|---------|
 | <a name="module_iam_assumable_role_conditions"></a> [iam\_assumable\_role\_conditions](#module\_iam\_assumable\_role\_conditions) | ../../modules/iam-assumable-role | n/a |
 | <a name="module_iam_assumable_role_instance_profile"></a> [iam\_assumable\_role\_instance\_profile](#module\_iam\_assumable\_role\_instance\_profile) | ../../modules/iam-assumable-role | n/a |
+| <a name="module_iam_assumable_roles"></a> [iam\_assumable\_roles](#module\_iam\_assumable\_roles) | ../../modules/iam-assumable-role | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [aws_iam_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 
 ## Inputs
 
