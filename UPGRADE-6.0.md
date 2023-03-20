@@ -7,6 +7,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 ## List of backwards incompatible changes
 
 - `iam-eks-role` has been removed; `iam-role-for-service-accounts-eks` should be used instead
+- `iam-policy` has been removed; the `aws_iam_policy` resource should be used directly instead
 
 ## Additional changes
 

@@ -82,7 +82,7 @@ module "iam_assumable_role_conditions" {
   policies = {
     AmazonCognitoReadOnly      = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
     AlexaForBusinessFullAccess = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
-    custom                     = module.iam_policy.arn
+    custom                     = aws_iam_policy.this.arn
   }
 
   tags = local.tags
@@ -92,9 +92,7 @@ module "iam_assumable_role_conditions" {
 # Supporting resources
 ################################################################################
 
-module "iam_policy" {
-  source = "../../modules/iam-policy"
-
+resource "aws_iam_policy" "this" {
   name        = local.name
   path        = "/"
   description = "Example policy"

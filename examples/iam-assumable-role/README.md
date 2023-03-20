@@ -26,7 +26,9 @@ Run `terraform destroy` when you don't need these resources.
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0 |
 
 ## Modules
 
@@ -34,11 +36,12 @@ No providers.
 |------|--------|---------|
 | <a name="module_iam_assumable_role_conditions"></a> [iam\_assumable\_role\_conditions](#module\_iam\_assumable\_role\_conditions) | ../../modules/iam-assumable-role | n/a |
 | <a name="module_iam_assumable_role_instance_profile"></a> [iam\_assumable\_role\_instance\_profile](#module\_iam\_assumable\_role\_instance\_profile) | ../../modules/iam-assumable-role | n/a |
-| <a name="module_iam_policy"></a> [iam\_policy](#module\_iam\_policy) | ../../modules/iam-policy | n/a |
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_iam_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 
 ## Inputs
 
