@@ -9,7 +9,7 @@ locals {
 # IAM Role
 ################################################################################
 
-data "aws_iam_policy_document" "assume_role" {
+data "aws_iam_policy_document" "this" {
   count = var.create ? 1 : 0
 
   dynamic "statement" {
@@ -84,7 +84,7 @@ resource "aws_iam_role" "this" {
   path        = var.path
   description = var.description
 
-  assume_role_policy    = data.aws_iam_policy_document.assume_role[0].json
+  assume_role_policy    = data.aws_iam_policy_document.this[0].json
   max_session_duration  = var.max_session_duration
   permissions_boundary  = var.permissions_boundary
   force_detach_policies = true
@@ -92,7 +92,7 @@ resource "aws_iam_role" "this" {
   tags = var.tags
 }
 
-resource "aws_iam_role_policy_attachment" "additional" {
+resource "aws_iam_role_policy_attachment" "this" {
   for_each = { for k, v in var.policies : k => v if var.create }
 
   policy_arn = each.value
