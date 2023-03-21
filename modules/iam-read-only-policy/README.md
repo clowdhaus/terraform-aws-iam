@@ -1,7 +1,27 @@
-# iam-read-only-policy
+### AWS IAM ReadOnly Policy Terraform Module
 
-Creates IAM read-only policy for specified services. Default AWS read-only policies (arn:aws:iam::aws:policy/job-function/ViewOnlyAccess, arn:aws:iam::aws:policy/ReadOnlyAccess), being a one-size-fits-all type of policies, have a lot of things missing as well as something that you might not need. Also, AWS default policies are known for having [security issues](https://securityboulevard.com/2020/12/the-aws-managed-policies-trap/)
-Thus this module is an attempt to build a better base for a customizable usable read-only policy.
+Creates an IAM policy that allows read-only access to the list of AWS services provided.
+
+Default AWS read-only policies (arn:aws:iam::aws:policy/job-function/ViewOnlyAccess, arn:aws:iam::aws:policy/ReadOnlyAccess), being a one-size-fits-all type of policies, have a lot of things missing as well as something that you might not need. Also, AWS default policies are known for having [security issues](https://securityboulevard.com/2020/12/the-aws-managed-policies-trap/). Thus this module is an attempt to build a better base for a customizable usable read-only policy.
+
+## Usage
+
+```hcl
+module "iam_read_only_policy" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-read-only-policy"
+
+  name        = "example"
+  path        = "/"
+  description = "My example read-only policy"
+
+  allowed_services = ["rds", "dynamo", "health"]
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -60,3 +80,7 @@ No modules.
 | <a name="output_policy"></a> [policy](#output\_policy) | The policy document |
 | <a name="output_policy_json"></a> [policy\_json](#output\_policy\_json) | Policy document as json. Useful if you need document but do not want to create IAM policy itself. For example for SSO Permission Set inline policies |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).

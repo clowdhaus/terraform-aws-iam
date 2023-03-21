@@ -1,6 +1,6 @@
-# IAM read-only policy example
+# AWS IAM ReadOnly Policy Example
 
-Configuration in this directory creates read-only IAM policy and attaches it to AWS SSO.
+Configuration in this directory creates a read-only IAM policy and attaches it to an AWS SSO permission set.
 
 # Usage
 

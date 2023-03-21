@@ -1,4 +1,4 @@
-# IAM Role for Service Accounts in EKS
+# AWS IAM Role for Service Accounts in EKS Terraform Module
 
 Creates an IAM role which can be assumed by AWS EKS `ServiceAccount`s with optional policies for commonly used controllers/custom resources within EKS. The optional policies supported include:
 - [Cert-Manager](https://cert-manager.io/docs/configuration/acme/dns01/route53/#set-up-an-iam-role)
@@ -22,8 +22,10 @@ This module is intended to be used with AWS EKS. For details of how a `ServiceAc
 
 This module supports multiple `ServiceAccount`s across multiple clusters and/or namespaces. This allows for a single IAM role to be used when an application may span multiple clusters (e.g. for DR) or multiple namespaces (e.g. for canary deployments). For example, to create an IAM role named `my-app` that can be assumed from the `ServiceAccount` named `my-app-staging` in the namespace `default` and `canary` in a cluster in `us-east-1`; and also the `ServiceAccount` name `my-app-staging` in the namespace `default` in a cluster in `ap-southeast-1`, the configuration would be:
 
+## Usage
+
 ```hcl
-module "iam_eks_role" {
+module "irsa" {
   source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   role_name = "my-app"
 
@@ -56,9 +58,9 @@ module "vpc_cni_irsa_role" {
   vpc_cni_enable_ipv4   = true
 
   oidc_providers = {
-    main = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["default:my-app", "canary:my-app"]
+      namespace_service_accounts = ["kube-system:aws-node"]
     }
   }
 }
@@ -66,29 +68,26 @@ module "vpc_cni_irsa_role" {
 module "karpenter_irsa_role" {
   source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
-  role_name                          = "karpenter_controller"
-  attach_karpenter_controller_policy = true
+  role_name = "karpenter_controller"
 
+  attach_karpenter_controller_policy      = true
   karpenter_controller_cluster_id         = module.eks.cluster_id
   karpenter_controller_node_iam_role_arns = [module.eks.eks_managed_node_groups["default"].iam_role_arn]
 
-  attach_vpc_cni_policy = true
-  vpc_cni_enable_ipv4   = true
-
   oidc_providers = {
-    main = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["default:my-app", "canary:my-app"]
+      namespace_service_accounts = ["karpenter:karpenter"]
     }
   }
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 18.6"
+  version = "~> 19.10"
 
   cluster_name    = "my-cluster"
-  cluster_version = "1.21"
+  cluster_version = "1.25"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
@@ -238,3 +237,7 @@ No modules.
 | <a name="output_iam_role_path"></a> [iam\_role\_path](#output\_iam\_role\_path) | Path of IAM role |
 | <a name="output_iam_role_unique_id"></a> [iam\_role\_unique\_id](#output\_iam\_role\_unique\_id) | Unique ID of IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).

@@ -1,8 +1,44 @@
-# iam-role
+# AWS IAM Role Terraform Module
 
-Creates single IAM role which can be assumed by trusted resources.
+Creates an IAM role with a trust policy and (optional) IAM instance profile. Useful for service roles such as EC2, ECS, etc., or roles assumed across AWS accounts.
 
-Trusted resources can be any [IAM ARNs](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns)
+## Usage
+
+```hcl
+module "iam_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role"
+
+  name = "example"
+
+  assume_role_policy_statements = [
+    {
+      sid = "TrustRoleAndServiceToAssume"
+      principals = [{
+        type = "AWS"
+        identifiers = [
+          "arn:aws:iam::835367859851:user/anton",
+        ]
+      }]
+      conditions = [{
+        test     = "StringEquals"
+        variable = "sts:ExternalId"
+        values   = ["some-secret-id"]
+      }]
+    }
+  ]
+
+  policies = {
+    AmazonCognitoReadOnly      = "arn:aws:iam::aws:policy/AmazonCognitoReadOnly"
+    AlexaForBusinessFullAccess = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
+    custom                     = aws_iam_policy.this.arn
+  }
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -62,3 +98,7 @@ No modules.
 | <a name="output_name"></a> [name](#output\_name) | The name of the IAM role |
 | <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | Stable and unique string identifying the IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).

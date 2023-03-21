@@ -1,8 +1,6 @@
-# IAM Group Example
+# AWS IAM Group Example
 
 Configuration in this directory creates IAM group with users who are allowed to assume IAM roles and extended with IAM policies.
-
-This is a combination of `iam-group-with-assumable-roles-policy` and `iam-group-with-policies` exampled.
 
 # Usage
 

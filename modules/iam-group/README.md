@@ -1,6 +1,40 @@
-# iam-group
 
-Creates IAM group with specified IAM policies, and add users into a group.
+# AWS IAM Group Terraform Module
+
+Creates an IAM group with IAM policy attached that one or more users can be added to.
+
+## Usage
+
+```hcl
+module "iam_group" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-group"
+
+  name = "superadmins"
+
+  users = [
+    "user1",
+    "user2"
+  ]
+
+  enable_self_management_permissions = true
+  permission_statements = [
+    {
+      sid       = "AssumeRole"
+      actions   = ["sts:AssumeRole"]
+      resources = ["arn:aws:iam::111111111111:role/admin"]
+    }
+  ]
+
+  policies = {
+    AdministratorAccess = "arn:aws:iam::aws:policy/AdministratorAccess",
+  }
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -65,3 +99,7 @@ No modules.
 | <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | The unique ID assigned by AWS |
 | <a name="output_users"></a> [users](#output\_users) | List of IAM users in IAM group |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).

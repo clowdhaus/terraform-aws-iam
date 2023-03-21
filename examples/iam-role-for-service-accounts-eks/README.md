@@ -1,4 +1,4 @@
-# IAM Role for Service Accounts in EKS
+# AWS IAM Role for Service Accounts in EKS
 
 Configuration in this directory creates IAM roles that can be assumed by multiple EKS `ServiceAccount`s for various tasks.
 

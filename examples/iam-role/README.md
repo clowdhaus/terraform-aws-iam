@@ -1,4 +1,4 @@
-# IAM Roles Example
+# AWS IAM Role Example
 
 Configuration in this directory creates IAM roles with different options for permissions and role assumption.
 

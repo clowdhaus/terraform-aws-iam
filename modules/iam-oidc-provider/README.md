@@ -1,8 +1,8 @@
-# IAM OIDC Provider
+# AWS IAM OIDC Provider
 
-Creates an IAM OIDC identity provider.
+Creates an OpenID connect provider. Useful for trusting external identity providers such as GitHub, Bitbucket, etc.
 
-Note: an IAM provider is 1 per account per given URL. This module would be provisioned once per AWS account, and multiple roles created with this provider as the trusted identity.
+⚠️ An IAM provider is 1 per account per given URL. This module would be provisioned once per AWS account, and then one or more roles can be created with this provider as the trusted identity.
 
 ## Usage
 
@@ -82,3 +82,7 @@ No modules.
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN assigned by AWS for this provider |
 | <a name="output_url"></a> [url](#output\_url) | The URL of the identity provider. Corresponds to the iss claim |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).

@@ -1,6 +1,6 @@
-# IAM Role w/ SAML Identity Provider example
+# AWS IAM Role w/ SAML Federation example
 
-Configuration in this directory creates a single IAM role which can be assumed by users with a SAML Identity Provider.
+Configuration in this directory creates an IAM role which can be assumed by users with a SAML Identity Provider.
 
 # Usage
 

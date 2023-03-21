@@ -1,4 +1,4 @@
-# IAM GitHub OIDC
+# AWS IAM OIDC Provider Example
 
 - Creates an IAM identity provider for GitHub OIDC
 - Creates an IAM role that trust the IAM GitHub OIDC provider

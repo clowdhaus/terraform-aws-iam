@@ -1,16 +1,31 @@
-# iam-user
+# AWS IAM User Terraform Module
 
-Creates IAM user, IAM login profile, IAM access key and uploads IAM SSH user public key. All of these are optional resources.
+Creates an IAM user with ability to create a login profile, access key, and SSH key.
 
-## Notes for keybase users
+## Usage
 
-**If possible, always use PGP encryption to prevent Terraform from keeping unencrypted password and access secret key in state file.**
+```hcl
+module "iam_user" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
 
-### Keybase pre-requisits
+  name = "vasya.pupkin"
+
+  force_destroy           = true
+  pgp_key                 = "keybase:test"
+  password_reset_required = false
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+```
+
+### Keybase
+
+If possible, always use PGP encryption to prevent Terraform from keeping unencrypted password and access secret key in state file.
 
 When `pgp_key` is specified as `keybase:username`, make sure that that user has already uploaded public key to keybase.io. For example, user with username `test` has done it properly and you can [verify it here](https://keybase.io/test/pgp_keys.asc).
-
-### How to decrypt user's encrypted password and secret key
 
 This module outputs commands and PGP messages which can be decrypted either using [keybase.io web-site](https://keybase.io/decrypt) or using command line to get user's password and user's secret key:
 - `keybase_password_decrypt_command`
@@ -95,3 +110,7 @@ No modules.
 | <a name="output_keybase_ses_smtp_password_v4_pgp_message"></a> [keybase\_ses\_smtp\_password\_v4\_pgp\_message](#output\_keybase\_ses\_smtp\_password\_v4\_pgp\_message) | Encrypted SES SMTP password |
 | <a name="output_pgp_key"></a> [pgp\_key](#output\_pgp\_key) | PGP key used to encrypt sensitive data for this user (if empty - secrets are not encrypted) |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).

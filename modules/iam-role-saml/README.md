@@ -1,9 +1,32 @@
-# iam-role-saml
+# AWS IAM SAML Role Terraform Module
 
-Creates single IAM role which can be assumed by trusted resources using SAML Federated Users.
+Creates single IAM role which can be assumed by trusted resources using SAML federation.
 
 [Creating IAM SAML Identity Providers](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_saml.html)
 [Enabling SAML 2.0 Federated Users to Access the AWS Management Console](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-saml.html)
+
+Creates an IAM role that trusts a SAML provider. Useful for trusting external identity providers such as Okta, OneLogin, etc.
+
+## Usage
+
+```hcl
+module "iam_role_saml" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-saml"
+
+  name = "example"
+
+  saml_provider_ids = ["arn:aws:iam::235367859851:saml-provider/idp_saml"]
+
+  policies = {
+    ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  }
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -60,3 +83,7 @@ No modules.
 | <a name="output_name"></a> [name](#output\_name) | The name of the IAM role |
 | <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | Stable and unique string identifying the IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).

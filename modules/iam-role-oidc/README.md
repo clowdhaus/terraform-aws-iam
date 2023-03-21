@@ -1,4 +1,4 @@
-# IAM OIDC Role
+# AWS IAM OIDC Role Terraform Module
 
 Creates a single IAM role which can be assumed by trusted resources using OpenID connect federation.
 
@@ -112,3 +112,7 @@ No modules.
 | <a name="output_name"></a> [name](#output\_name) | The name of the IAM role |
 | <a name="output_unique_id"></a> [unique\_id](#output\_unique\_id) | Stable and unique string identifying the IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## License
+
+Apache-2.0 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-iam/blob/master/LICENSE).
