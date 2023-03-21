@@ -54,6 +54,11 @@ module "iam_assumable_role" {
     AlexaForBusinessFullAccess = "arn:aws:iam::aws:policy/AlexaForBusinessFullAccess"
     custom                     = aws_iam_policy.this.arn
   }
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
 }
 ```
 
@@ -74,6 +79,11 @@ module "iam_assumable_role_with_oidc" {
   policies = {
     AmazonEKS_CNI_Policy = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   }
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
 }
 ```
 
@@ -83,20 +93,18 @@ module "iam_assumable_role_with_oidc" {
 module "iam_assumable_role_with_saml" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-saml"
 
-  create_role = true
+  name = "example"
 
-  role_name = "role-with-saml"
+  saml_provider_ids = ["arn:aws:iam::235367859851:saml-provider/idp_saml"]
 
-  tags = {
-    Role = "role-with-saml"
+  policies = {
+    ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
   }
 
-  provider_id = "arn:aws:iam::235367859851:saml-provider/idp_saml"
-
-  role_policy_arns = [
-    "arn:aws:iam::aws:policy/ReadOnlyAccess"
-  ]
-  number_of_role_policy_arns = 1
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
 }
 ```
 

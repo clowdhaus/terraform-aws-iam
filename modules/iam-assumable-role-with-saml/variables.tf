@@ -1,85 +1,53 @@
-variable "create_role" {
-  description = "Whether to create a role"
+variable "create" {
+  description = "Controls if resources should be created (affects all resources)"
   type        = bool
-  default     = false
-}
-
-variable "provider_id" {
-  description = "ID of the SAML Provider. Use provider_ids to specify several IDs."
-  type        = string
-  default     = ""
-}
-
-variable "provider_ids" {
-  description = "List of SAML Provider IDs"
-  type        = list(string)
-  default     = []
-}
-
-variable "aws_saml_endpoint" {
-  description = "AWS SAML Endpoint"
-  default     = "https://signin.aws.amazon.com/saml"
-  type        = string
+  default     = true
 }
 
 variable "tags" {
-  description = "A map of tags to add to IAM role resources"
+  description = "A map of tags to add to all resources"
   type        = map(string)
   default     = {}
 }
 
-variable "role_name" {
-  description = "IAM role name"
+################################################################################
+# IAM Role
+################################################################################
+
+variable "name" {
+  description = "Name to use on IAM role created"
   type        = string
   default     = null
 }
 
-variable "role_name_prefix" {
-  description = "IAM role name prefix"
+variable "name_prefix" {
+  description = "Name prefix to use on IAM role created"
   type        = string
   default     = null
 }
 
-variable "role_description" {
-  description = "IAM Role description"
-  type        = string
-  default     = ""
-}
-
-variable "role_path" {
+variable "path" {
   description = "Path of IAM role"
   type        = string
   default     = "/"
 }
 
-variable "role_permissions_boundary_arn" {
-  description = "Permissions boundary ARN to use for IAM role"
+variable "description" {
+  description = "Description of the role"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "max_session_duration" {
-  description = "Maximum CLI/API session duration in seconds between 3600 and 43200"
-  type        = number
-  default     = 3600
-}
-
-variable "role_policy_arns" {
-  description = "List of ARNs of IAM policies to attach to IAM role"
-  type        = list(string)
-  default     = []
-}
-
-variable "number_of_role_policy_arns" {
-  description = "Number of IAM policies to attach to IAM role"
+  description = "Maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours"
   type        = number
   default     = null
 }
 
-variable "force_detach_policies" {
-  description = "Whether policies should be detached from this role when destroying"
-  type        = bool
-  default     = false
+variable "permissions_boundary" {
+  description = "ARN of the policy that is used to set the permissions boundary for the IAM role"
+  type        = string
+  default     = null
 }
 
 variable "allow_self_assume_role" {
@@ -88,8 +56,32 @@ variable "allow_self_assume_role" {
   default     = false
 }
 
-variable "trusted_role_actions" {
-  description = "Extra Actions of STS"
+variable "assume_role_policy_statements" {
+  description = "List of IAM policy [statements](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document#statement) for for trusted assume role policy"
+  type        = any
+  default     = []
+}
+
+variable "policies" {
+  description = "Map of IAM policies to be added to the IAM role"
+  type        = map(string)
+  default     = {}
+}
+
+variable "saml_provider_ids" {
+  description = "List of SAML provider IDs"
   type        = list(string)
-  default     = [""]
+  default     = []
+}
+
+variable "saml_endpoints" {
+  description = "List of AWS SAML endpoints"
+  type        = list(string)
+  default     = ["https://signin.aws.amazon.com/saml"]
+}
+
+variable "saml_trust_actions" {
+  description = "Additional assume role trust actions for the SAML federated statement"
+  type        = list(string)
+  default     = []
 }

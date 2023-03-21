@@ -23,6 +23,10 @@ If you find a bug, please open an issue with supporting configuration to reprodu
     - `custom_role_policy_arns` has been renamed to `policies` and now accepts a map of `name`: `policy-arn` pairs; this allows for both existing policies and policies that will get created at the same time as the role.
     - Default create conditional is now `true` instead of `false`
     - `force_detach_policies` has been removed; this is now always `true`
+- `iam-assumable-role-with-saml`
+    - `custom_role_policy_arns` has been renamed to `policies` and now accepts a map of `name`: `policy-arn` pairs; this allows for both existing policies and policies that will get created at the same time as the role.
+    - Default create conditional is now `true` instead of `false`
+    - `force_detach_policies` has been removed; this is now always `true`
 
 ### Variable and output changes
 
@@ -44,6 +48,9 @@ If you find a bug, please open an issue with supporting configuration to reprodu
     - `iam-assumable-role-with-oidc`
         - `force_detach_policies`
         - `number_of_custom_role_policy_arns`
+    - `iam-assumable-role-with-saml`
+        - `force_detach_policies`
+        - `number_of_custom_role_policy_arns`
 
 2. Renamed variables:
 
@@ -63,12 +70,24 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `role_path` -> `path`
         - `role_permissions_boundary_arn` -> `permissions_boundary_arn`
         - `custom_role_policy_arns` -> `policies`
+    - `iam-assumable-role-with-saml`
+        - `create_role` -> `create`
+        - `role_name` -> `name`
+        - `role_name_prefix` -> `name_prefix`
+        - `role_description` -> `description`
+        - `role_path` -> `path`
+        - `role_permissions_boundary_arn` -> `permissions_boundary_arn`
+        - `custom_role_policy_arns` -> `policies`
+        - `aws_saml_endpoint` -> `saml_endpoints`
+        - `trusted_role_actions` -> `saml_trust_actions`
 
 3. Added variables:
 
     - `iam-assumable-role`
         - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
     - `iam-assumable-role-with-oidc`
+        - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
+    - `iam-assumable-role-with-saml`
         - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
 
 4. Removed outputs:
@@ -81,6 +100,9 @@ If you find a bug, please open an issue with supporting configuration to reprodu
     - `iam-assumable-role-with-oidc`
         - `iam_role_path`
         - `provider_url` (use `oidc_provider_urls` instead)
+    - `iam-assumable-role-with-saml`
+        - `iam_role_path`
+        - `provider_id` (use `saml_provider_ids` instead)
 
 5. Renamed outputs:
 
@@ -97,6 +119,13 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `iam_role_name` -> `name`
         - `iam_role_unique_id` -> `unique_id`
         - `aws_account_id` -> `oidc_account_id`
+        - `provider_urls` -> `oidc_provider_urls`
+    - `iam-assumable-role-with-oidc`
+        - `iam_role_arn` -> `arn`
+        - `iam_role_name` -> `name`
+        - `iam_role_unique_id` -> `unique_id`
+        - `aws_account_id` -> `oidc_account_id`
+        - `provider_ids` -> `saml_provider_ids`
 
 6. Added outputs:
 

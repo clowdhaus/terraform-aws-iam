@@ -2,57 +2,45 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-resource "aws_iam_saml_provider" "idp_saml" {
+locals {
+  name = "ex-${basename(path.cwd)}"
+
+  tags = {
+    Example    = local.name
+    GithubRepo = "terraform-aws-iam"
+    GithubOrg  = "terraform-aws-modules"
+  }
+}
+
+################################################################################
+# IAM Assumable Role w/ SAML
+################################################################################
+
+module "iam_assumable_role" {
+  source = "../../modules/iam-assumable-role-with-saml"
+
+  name = local.name
+
+  saml_provider_ids = [aws_iam_saml_provider.this.id]
+
+  policies = {
+    ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+  }
+
+  tags = local.tags
+}
+
+module "iam_assumable_role_disabled" {
+  source = "../../modules/iam-assumable-role-with-oidc"
+
+  create = false
+}
+
+################################################################################
+# Supporting Resources
+################################################################################
+
+resource "aws_iam_saml_provider" "this" {
   name                   = "idp_saml"
   saml_metadata_document = file("saml-metadata.xml")
-}
-
-resource "aws_iam_saml_provider" "second_idp_saml" {
-  name                   = "second_idp_saml"
-  saml_metadata_document = file("saml-metadata.xml")
-}
-
-###############################
-# IAM assumable role for admin
-###############################
-module "iam_assumable_role_admin" {
-  source = "../../modules/iam-assumable-role-with-saml"
-
-  create_role = true
-
-  role_name = "role-with-saml"
-
-  tags = {
-    Role = "role-with-saml"
-  }
-
-  provider_id  = aws_iam_saml_provider.idp_saml.id
-  provider_ids = [aws_iam_saml_provider.second_idp_saml.id]
-
-  role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-  ]
-}
-
-#####################################
-# IAM assumable role with self assume
-#####################################
-module "iam_assumable_role_self_assume" {
-  source = "../../modules/iam-assumable-role-with-saml"
-
-  create_role            = true
-  allow_self_assume_role = true
-
-  role_name = "role-with-saml-self-assume"
-
-  tags = {
-    Role = "role-with-saml-self-assume"
-  }
-
-  provider_id  = aws_iam_saml_provider.idp_saml.id
-  provider_ids = [aws_iam_saml_provider.second_idp_saml.id]
-
-  role_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-  ]
 }
