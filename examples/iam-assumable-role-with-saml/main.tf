@@ -30,6 +30,34 @@ module "iam_assumable_role" {
   tags = local.tags
 }
 
+
+module "iam_assumable_roles" {
+  source = "../../modules/iam-assumable-role-with-saml"
+
+  for_each = {
+    admin = {
+      policies = {
+        AdministratorAccess = "arn:aws:iam::aws:policy/AdministratorAccess"
+      }
+    }
+    readonly = {
+      policies = {
+        ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
+      }
+    }
+    poweruser = {
+      PowerUserAccess = "arn:aws:iam::aws:policy/PowerUserAccess"
+    }
+  }
+
+  name_prefix = "${each.key}-"
+
+  saml_provider_ids = [aws_iam_saml_provider.this.id]
+  policies          = each.value.policies
+
+  tags = local.tags
+}
+
 module "iam_assumable_role_disabled" {
   source = "../../modules/iam-assumable-role-with-oidc"
 

@@ -34,6 +34,7 @@ Run `terraform destroy` when you don't need these resources.
 |------|--------|---------|
 | <a name="module_iam_assumable_role"></a> [iam\_assumable\_role](#module\_iam\_assumable\_role) | ../../modules/iam-assumable-role-with-saml | n/a |
 | <a name="module_iam_assumable_role_disabled"></a> [iam\_assumable\_role\_disabled](#module\_iam\_assumable\_role\_disabled) | ../../modules/iam-assumable-role-with-oidc | n/a |
+| <a name="module_iam_assumable_roles"></a> [iam\_assumable\_roles](#module\_iam\_assumable\_roles) | ../../modules/iam-assumable-role-with-saml | n/a |
 
 ## Resources
 

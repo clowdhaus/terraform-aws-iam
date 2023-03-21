@@ -7,6 +7,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 ## List of backwards incompatible changes
 
 - `iam-assumable-roles` has been removed; `iam-assumable-role` should be used instead. See the [`iam-assumable-role` example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-assumable-role) that shows an example replacement implementation.
+- `iam-assumable-roles-with-saml` has been removed; `iam-assumable-role-with-saml` should be used instead. See the [`iam-assumable-role-with-saml` example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-assumable-role-with-saml) that shows an example replacement implementation.
 - `iam-eks-role` has been removed; `iam-role-for-service-accounts-eks` should be used instead
 - `iam-policy` has been removed; the `aws_iam_policy` resource should be used directly instead
 
