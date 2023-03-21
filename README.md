@@ -4,11 +4,6 @@
 
 [![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
-## Features
-
-1. **Cross-account access.** Define IAM roles using `iam_role` submodule in "resource AWS accounts (prod, staging, dev)" and IAM groups and users using `iam-group-with-assumable-roles-policy` submodule in "IAM AWS Account" to setup access controls between accounts. See [iam-group-with-assumable-roles-policy example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-group-with-assumable-roles-policy) for more details.
-2. **Individual IAM resources (users, roles, policies).** See usage snippets and [examples](https://github.com/terraform-aws-modules/terraform-aws-iam#examples) listed below.
-
 ## Usage
 
 `iam-account`:
@@ -139,50 +134,31 @@ module "iam_github_oidc_role" {
 }
 ```
 
-`iam-group-with-assumable-roles-policy`:
+`iam-group`:
 
 ```hcl
-module "iam_group_with_assumable_roles_policy" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-group-with-assumable-roles-policy"
-
-  name = "production-readonly"
-
-  assumable_roles = [
-    "arn:aws:iam::835367859855:role/readonly"  # these roles can be created using `iam_assumable_roles` submodule
-  ]
-
-  group_users = [
-    "user1",
-    "user2"
-  ]
-}
-```
-
-`iam-group-with-policies`:
-
-```hcl
-module "iam_group_with_policies" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-group-with-policies"
+module "iam_group" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-group"
 
   name = "superadmins"
 
-  group_users = [
+  users = [
     "user1",
     "user2"
   ]
 
-  attach_iam_self_management_policy = true
-
-  custom_group_policy_arns = [
-    "arn:aws:iam::aws:policy/AdministratorAccess",
-  ]
-
-  custom_group_policies = [
+  enable_self_management_permissions = true
+  permission_statements = [
     {
-      name   = "AllowS3Listing"
-      policy = data.aws_iam_policy_document.sample.json
+      sid       = "AssumeRole"
+      actions   = ["sts:AssumeRole"]
+      resources = ["arn:aws:iam::111111111111:role/admin"]
     }
   ]
+
+  policies = {
+    AdministratorAccess = "arn:aws:iam::aws:policy/AdministratorAccess",
+  }
 }
 ```
 
@@ -253,8 +229,7 @@ Use the [iam-role module](https://github.com/terraform-aws-modules/terraform-aws
 
 3. Use Groups to Assign Permissions to IAM Users
 
-Use [iam-group-with-assumable-roles-policy module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-group-with-assumable-roles-policy) to manage IAM groups of users who can assume roles.
-Use [iam-group-with-policies module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-group-with-policies) to manage IAM groups of users where specified IAM policies are allowed.
+Use [iam-group module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-group) to manage IAM groups of users who can assume roles.
 
 4. Configure a Strong Password Policy for Your Users
 
@@ -266,7 +241,7 @@ Use the [iam-role module](https://github.com/terraform-aws-modules/terraform-aws
 
 6. Delegate by Using Roles Instead of by Sharing Credentials
 
-[iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role), [iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role), and [iam-group-with-assumable-roles-policy](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-group-with-assumable-roles-policy) modules provide complete set of functionality required for this.
+[iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role) and [iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role) modules provide complete set of functionality required for this.
 
 7. Use Policy Conditions for Extra Security
 
@@ -282,9 +257,7 @@ Use [iam-read-only-policy module](https://github.com/terraform-aws-modules/terra
 - [iam-role-oidc](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-oidc) - Create individual IAM role which can be assumed from specified subjects federated with a OIDC Identity Provider
 - [iam-role-saml](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-saml) - Create individual IAM role which can be assumed by users with a SAML Identity Provider
 - [iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role) - Create individual IAM role which can be assumed from specified ARNs (AWS accounts, IAM users, etc)
-- [iam-group-complete](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-group-complete) - IAM group with users who are allowed to assume IAM roles in another AWS account and have access to specified IAM policies
-- [iam-group-with-assumable-roles-policy](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-group-with-assumable-roles-policy) - IAM group with users who are allowed to assume IAM roles in the same or in separate AWS account
-- [iam-group-with-policies](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-group-with-policies) - IAM group with users who are allowed specified IAM policies (eg, "manage their own IAM user")
+- [iam-group](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-group) - IAM group with users who are allowed to assume IAM roles in another AWS account and have access to specified IAM policies
 - [iam-read-only-policy](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-read-only-policy) - Create IAM read-only policy
 - [iam-role-for-service-accounts-eks](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-for-service-accounts-eks) - Create IAM role for service accounts (IRSA) for use within EKS clusters
 - [iam-user](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-user) - Add IAM user, login profile and access keys (with PGP enabled or disabled)

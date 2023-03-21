@@ -11,6 +11,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 - `iam-assumable-role-with-saml` has been renamed to `iam-role-saml`
 - `iam-assumable-roles` has been removed; `iam-role` should be used instead. See the [`iam-role` example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role) that shows an example replacement implementation.
 - `iam-assumable-roles-with-saml` has been removed; `iam-role-saml` should be used instead. See the [`iam-role-saml` example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-saml) that shows an example replacement implementation.
+- `iam-group-with-assumable-roles-policy` has been removed; the renamed `iam-group` (was `iam-group-with-policies`) should be used instead
 - `iam-eks-role` has been removed; `iam-role-for-service-accounts-eks` should be used instead
 - `iam-policy` has been removed; the `aws_iam_policy` resource should be used directly instead
 
@@ -31,6 +32,10 @@ If you find a bug, please open an issue with supporting configuration to reprodu
     - `custom_role_policy_arns` has been renamed to `policies` and now accepts a map of `name`: `policy-arn` pairs; this allows for both existing policies and policies that will get created at the same time as the role.
     - Default create conditional is now `true` instead of `false`
     - `force_detach_policies` has been removed; this is now always `true`
+- `iam-group`
+    - Policy management has been updated to support extending the policy created by the sub-module, as well as adding additional policies that will be attached to the group
+    - The role assumption permissions has been removed from the policy; users can extend the policy to add this if needed via `permission_statements`
+    - Default create conditional is now `true` instead of `false`
 
 ### Variable and output changes
 
@@ -55,6 +60,9 @@ If you find a bug, please open an issue with supporting configuration to reprodu
     - `iam-role-saml`
         - `force_detach_policies`
         - `number_of_custom_role_policy_arns`
+    - `iam-group`
+        - `custom_group_policies`
+        - `assumable_roles`
 
 2. Renamed variables:
 
@@ -84,6 +92,13 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `custom_role_policy_arns` -> `policies`
         - `aws_saml_endpoint` -> `saml_endpoints`
         - `trusted_role_actions` -> `saml_trust_actions`
+    - `iam-group`
+        - `create_group` -> `create`
+        - `group_users` -> `group`
+        - `custom_group_policy_arns` -> `policies`
+        - `attach_iam_self_management_policy` -> `create_policy`
+        - `iam_self_management_policy_name_prefix` -> `policy_name_prefix`
+        - `aws_account_id` -> `users_account_id`
 
 3. Added variables:
 
@@ -93,6 +108,11 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
     - `iam-role-saml`
         - `assume_role_policy_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
+    - `iam-group`
+        - `permission_statements` which allows for any number of custom statements to be added to the role's trust policy. This covers the majority of the variables that were removed
+        - `path`/`policy_path`
+        - `create_policy`
+        - `enable_mfa_enforcment`
 
 4. Removed outputs:
 
@@ -107,6 +127,9 @@ If you find a bug, please open an issue with supporting configuration to reprodu
     - `iam-role-saml`
         - `iam_role_path`
         - `provider_id` (use `saml_provider_ids` instead)
+    - `iam-group`
+        - `assumable_roles`
+        - `aws_account_id`
 
 5. Renamed outputs:
 
@@ -130,10 +153,17 @@ If you find a bug, please open an issue with supporting configuration to reprodu
         - `iam_role_unique_id` -> `unique_id`
         - `aws_account_id` -> `oidc_account_id`
         - `provider_ids` -> `saml_provider_ids`
+    - `iam-group`
+        - `group_id` -> `id`
+        - `group_name` -> `name`
+        - `group_arn` -> `arn`
+        - `group_users` -> `users`
 
 6. Added outputs:
 
-    -
+    - `iam-group`
+        - `unique_id`
+        - `policy_id`
 
 ### Diff of before <> after
 
