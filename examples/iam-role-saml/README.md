@@ -1,6 +1,6 @@
-# Individual IAM assumable role example
+# IAM Role w/ SAML Identity Provider example
 
-Configuration in this directory creates a single IAM role which can be assumed by trusted resources using OpenID Connect Federated Users.
+Configuration in this directory creates a single IAM role which can be assumed by users with a SAML Identity Provider.
 
 # Usage
 
@@ -24,18 +24,23 @@ Run `terraform destroy` when you don't need these resources.
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_iam_assumable_role"></a> [iam\_assumable\_role](#module\_iam\_assumable\_role) | ../../modules/iam-assumable-role-with-oidc | n/a |
-| <a name="module_iam_assumable_role_disabled"></a> [iam\_assumable\_role\_disabled](#module\_iam\_assumable\_role\_disabled) | ../../modules/iam-assumable-role-with-oidc | n/a |
+| <a name="module_iam_role"></a> [iam\_role](#module\_iam\_role) | ../../modules/iam-role-saml | n/a |
+| <a name="module_iam_role_disabled"></a> [iam\_role\_disabled](#module\_iam\_role\_disabled) | ../../modules/iam-role-oidc | n/a |
+| <a name="module_iam_roles"></a> [iam\_roles](#module\_iam\_roles) | ../../modules/iam-role-saml | n/a |
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_iam_saml_provider.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_saml_provider) | resource |
 
 ## Inputs
 

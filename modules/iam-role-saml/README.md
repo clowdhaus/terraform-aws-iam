@@ -1,4 +1,4 @@
-# iam-assumable-role-with-saml
+# iam-role-saml
 
 Creates single IAM role which can be assumed by trusted resources using SAML Federated Users.
 

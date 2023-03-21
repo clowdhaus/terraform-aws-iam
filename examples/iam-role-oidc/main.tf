@@ -13,11 +13,11 @@ locals {
 }
 
 ################################################################################
-# IAM Assumable Role w/ OIDC
+# IAM Role w/ OIDC
 ################################################################################
 
-module "iam_assumable_role" {
-  source = "../../modules/iam-assumable-role-with-oidc"
+module "iam_role" {
+  source = "../../modules/iam-role-oidc"
 
   name = local.name
 
@@ -34,8 +34,8 @@ module "iam_assumable_role" {
   tags = local.tags
 }
 
-module "iam_assumable_role_disabled" {
-  source = "../../modules/iam-assumable-role-with-oidc"
+module "iam_role_disabled" {
+  source = "../../modules/iam-role-oidc"
 
   create = false
 }

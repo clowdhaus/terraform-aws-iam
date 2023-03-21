@@ -13,11 +13,11 @@ locals {
 }
 
 ################################################################################
-# IAM Assumable Role w/ SAML
+# IAM Role w/ SAML
 ################################################################################
 
-module "iam_assumable_role" {
-  source = "../../modules/iam-assumable-role-with-saml"
+module "iam_role" {
+  source = "../../modules/iam-role-saml"
 
   name = local.name
 
@@ -30,9 +30,8 @@ module "iam_assumable_role" {
   tags = local.tags
 }
 
-
-module "iam_assumable_roles" {
-  source = "../../modules/iam-assumable-role-with-saml"
+module "iam_roles" {
+  source = "../../modules/iam-role-saml"
 
   for_each = {
     admin = {
@@ -58,8 +57,8 @@ module "iam_assumable_roles" {
   tags = local.tags
 }
 
-module "iam_assumable_role_disabled" {
-  source = "../../modules/iam-assumable-role-with-oidc"
+module "iam_role_disabled" {
+  source = "../../modules/iam-role-oidc"
 
   create = false
 }

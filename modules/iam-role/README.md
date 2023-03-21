@@ -1,4 +1,4 @@
-# iam-assumable-role
+# iam-role
 
 Creates single IAM role which can be assumed by trusted resources.
 

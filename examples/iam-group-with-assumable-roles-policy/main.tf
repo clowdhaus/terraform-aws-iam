@@ -40,12 +40,12 @@ module "iam_user2" {
 }
 
 #####################################################################################
-# Several IAM assumable roles (admin, poweruser, readonly) in production AWS account
+# Several IAM roles (admin, poweruser, readonly) in production AWS account
 # Note: Anyone from IAM account can assume them.
 #####################################################################################
 
-module "iam_assumable_role_custom" {
-  source = "../../modules/iam-assumable-role"
+module "iam_role" {
+  source = "../../modules/iam-role"
 
   providers = {
     aws = aws.production
@@ -90,7 +90,7 @@ module "iam_group_with_assumable_roles_policy_production_custom" {
 
   name = "production-custom"
 
-  assumable_roles = [module.iam_assumable_role_custom.arn]
+  assumable_roles = [module.iam_role.arn]
 
   group_users = [
     module.iam_user2.iam_user_name,

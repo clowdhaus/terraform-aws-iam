@@ -15,11 +15,11 @@ locals {
 }
 
 ################################################################################
-# IAM Assumable Role
+# IAM Role
 ################################################################################
 
-module "iam_assumable_role_instance_profile" {
-  source = "../../modules/iam-assumable-role"
+module "iam_role_instance_profile" {
+  source = "../../modules/iam-role"
 
   name = "${local.name}-instance-profile"
 
@@ -55,8 +55,8 @@ module "iam_assumable_role_instance_profile" {
   tags = local.tags
 }
 
-module "iam_assumable_role_conditions" {
-  source = "../../modules/iam-assumable-role"
+module "iam_role_conditions" {
+  source = "../../modules/iam-role"
 
   name_prefix = "conditions-"
 
@@ -86,8 +86,8 @@ module "iam_assumable_role_conditions" {
   tags = local.tags
 }
 
-module "iam_assumable_roles" {
-  source = "../../modules/iam-assumable-role"
+module "iam_roles" {
+  source = "../../modules/iam-role"
 
   for_each = {
     admin = {
@@ -138,8 +138,8 @@ module "iam_assumable_roles" {
   tags = local.tags
 }
 
-module "iam_assumable_role_disabled" {
-  source = "../../modules/iam-assumable-role"
+module "iam_role_disabled" {
+  source = "../../modules/iam-role"
 
   create = false
 }

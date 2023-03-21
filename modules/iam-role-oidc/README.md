@@ -1,4 +1,4 @@
-# iam-assumable-role-with-oidc
+# iam-role-oidc
 
 Creates single IAM role which can be assumed by trusted resources using OpenID Connect Federated Users.
 

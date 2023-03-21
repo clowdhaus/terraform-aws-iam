@@ -1,8 +1,6 @@
-# Individual IAM assumable roles example
+# IAM Roles Example
 
-Configuration in this directory creates several individual IAM roles which can be assumed from a defined list of [IAM ARNs](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns).
-
-The main difference between `iam-assumable-role` and `iam-assumable-roles` examples is that the former creates just a single role.
+Configuration in this directory creates IAM roles with different options for permissions and role assumption.
 
 # Usage
 
@@ -34,10 +32,10 @@ Run `terraform destroy` when you don't need these resources.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_iam_assumable_role_conditions"></a> [iam\_assumable\_role\_conditions](#module\_iam\_assumable\_role\_conditions) | ../../modules/iam-assumable-role | n/a |
-| <a name="module_iam_assumable_role_disabled"></a> [iam\_assumable\_role\_disabled](#module\_iam\_assumable\_role\_disabled) | ../../modules/iam-assumable-role | n/a |
-| <a name="module_iam_assumable_role_instance_profile"></a> [iam\_assumable\_role\_instance\_profile](#module\_iam\_assumable\_role\_instance\_profile) | ../../modules/iam-assumable-role | n/a |
-| <a name="module_iam_assumable_roles"></a> [iam\_assumable\_roles](#module\_iam\_assumable\_roles) | ../../modules/iam-assumable-role | n/a |
+| <a name="module_iam_role_conditions"></a> [iam\_role\_conditions](#module\_iam\_role\_conditions) | ../../modules/iam-role | n/a |
+| <a name="module_iam_role_disabled"></a> [iam\_role\_disabled](#module\_iam\_role\_disabled) | ../../modules/iam-role | n/a |
+| <a name="module_iam_role_instance_profile"></a> [iam\_role\_instance\_profile](#module\_iam\_role\_instance\_profile) | ../../modules/iam-role | n/a |
+| <a name="module_iam_roles"></a> [iam\_roles](#module\_iam\_roles) | ../../modules/iam-role | n/a |
 
 ## Resources
 

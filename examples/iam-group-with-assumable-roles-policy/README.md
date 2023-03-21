@@ -33,8 +33,8 @@ Run `terraform destroy` when you don't need these resources.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_iam_assumable_role_custom"></a> [iam\_assumable\_role\_custom](#module\_iam\_assumable\_role\_custom) | ../../modules/iam-assumable-role | n/a |
 | <a name="module_iam_group_with_assumable_roles_policy_production_custom"></a> [iam\_group\_with\_assumable\_roles\_policy\_production\_custom](#module\_iam\_group\_with\_assumable\_roles\_policy\_production\_custom) | ../../modules/iam-group-with-assumable-roles-policy | n/a |
+| <a name="module_iam_role"></a> [iam\_role](#module\_iam\_role) | ../../modules/iam-role | n/a |
 | <a name="module_iam_user1"></a> [iam\_user1](#module\_iam\_user1) | ../../modules/iam-user | n/a |
 | <a name="module_iam_user2"></a> [iam\_user2](#module\_iam\_user2) | ../../modules/iam-user | n/a |
 
