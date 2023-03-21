@@ -1,14 +1,36 @@
-# IAM GitHub OIDC Provider
+# IAM OIDC Provider
 
-Creates an IAM identity provider for GitHub OIDC. See more details here https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+Creates an IAM OIDC identity provider.
 
-Note: an IAM provider is 1 per account per given URL. This module would be provisioned once per AWS account, and multiple roles created with this provider as the trusted identity (typically 1 role per GitHub repository).
+Note: an IAM provider is 1 per account per given URL. This module would be provisioned once per AWS account, and multiple roles created with this provider as the trusted identity.
 
 ## Usage
 
+### GitHub
+
+See more details [here](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)
+
 ```hcl
-module "iam_github_oidc_provider" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-github-oidc-provider"
+module "iam_oidc_provider" {
+  source    = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
+
+  url = "https://token.actions.githubusercontent.com"
+
+  tags = {
+    Environment = "test"
+  }
+}
+```
+
+### Bitbucket
+
+See more details [here](https://support.atlassian.com/bitbucket-cloud/docs/integrate-pipelines-with-resource-servers-using-oidc/)
+
+```hcl
+module "iam_oidc_provider" {
+  source    = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
+
+  url = "https://api.bitbucket.org/2.0/workspaces/example-workspace/pipelines-config/identity/oidc"
 
   tags = {
     Environment = "test"

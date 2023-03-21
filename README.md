@@ -4,6 +4,8 @@
 
 [![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
 
+Please refer to the AWS published [IAM Best Practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html) for up to date guidance on IAM best practices.
+
 ## Usage
 
 `iam-account`:
@@ -60,19 +62,16 @@ module "iam_role" {
 `iam-role-oidc`:
 
 ```hcl
-module "iam_role_oidc" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-oidc"
+module "iam_oidc_role" {
+  source    = "terraform-aws-modules/iam/aws//modules/iam-oidc-role"
 
-  name = "example"
+  enable_github_oidc = true
 
-  oidc_provider_urls = ["oidc.eks.eu-west-1.amazonaws.com/id/AA9E170D464AF7B92084EF72A69B9DC8"]
-  oidc_fully_qualified_subjects = [
-    "system:serviceaccount:default:sa1",
-    "system:serviceaccount:default:sa2",
-  ]
+  # This should be updated to suit your organization, repository, references/branches, etc.
+  oidc_subjects = ["terraform-aws-modules/terraform-aws-iam:*"]
 
   policies = {
-    AmazonEKS_CNI_Policy = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+    S3ReadOnly = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
   }
 
   tags = {
@@ -103,30 +102,13 @@ module "iam_role_saml" {
 }
 ```
 
-`iam-github-oidc-provider`:
+`iam-oidc-provider`:
 
 ```hcl
-module "iam_github_oidc_provider" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-github-oidc-provider"
+module "iam_oidc_provider" {
+  source    = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
 
-  tags = {
-    Environment = "test"
-  }
-}
-```
-
-`iam-github-oidc-role`:
-
-```hcl
-module "iam_github_oidc_role" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-github-oidc-role"
-
-  # This should be updated to suit your organization, repository, references/branches, etc.
-  subjects = ["terraform-aws-modules/terraform-aws-iam:*"]
-
-  policies = {
-    S3ReadOnly = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
-  }
+  url = "https://token.actions.githubusercontent.com"
 
   tags = {
     Environment = "test"
@@ -215,51 +197,15 @@ module "iam_user" {
 }
 ```
 
-## IAM Best Practices
-
-AWS published [IAM Best Practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html) and this Terraform module was created to help with some of points listed there:
-
-1. Create Individual IAM Users
-
-Use the [iam-user module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-user) module to manage IAM users.
-
-2. Use AWS Defined Policies to Assign Permissions Whenever Possible
-
-Use the [iam-role module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role) to create IAM roles with managed policies to support common tasks (admin, poweruser or readonly).
-
-3. Use Groups to Assign Permissions to IAM Users
-
-Use [iam-group module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-group) to manage IAM groups of users who can assume roles.
-
-4. Configure a Strong Password Policy for Your Users
-
-Use [iam-account module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-account) to set password policy for your IAM users.
-
-5. Enable MFA for Privileged Users
-
-Use the [iam-role module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role) to create IAM roles that require MFA.
-
-6. Delegate by Using Roles Instead of by Sharing Credentials
-
-[iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role) and [iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role) modules provide complete set of functionality required for this.
-
-7. Use Policy Conditions for Extra Security
-
-[iam-role module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-role) can be configured to require valid MFA token when different roles are assumed (for example, admin role requires MFA, but readonly - does not).
-
-8. Create IAM Policies
-
-Use [iam-read-only-policy module](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/modules/iam-read-only-policy) module to manage IAM read-only policies.
-
 ## Examples
 
 - [iam-account](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-account) - Set AWS account alias and password policy
-- [iam-role-oidc](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-oidc) - Create individual IAM role which can be assumed from specified subjects federated with a OIDC Identity Provider
-- [iam-role-saml](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-saml) - Create individual IAM role which can be assumed by users with a SAML Identity Provider
-- [iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role) - Create individual IAM role which can be assumed from specified ARNs (AWS accounts, IAM users, etc)
 - [iam-group](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-group) - IAM group with users who are allowed to assume IAM roles in another AWS account and have access to specified IAM policies
+- [iam-oidc-provider](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-oidc-provider) - Create an OpenID connect provider and IAM role which can be assumed from specified subjects federated from the OIDC provider
 - [iam-read-only-policy](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-read-only-policy) - Create IAM read-only policy
+- [iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role) - Create individual IAM role which can be assumed from specified ARNs (AWS accounts, IAM users, etc)
 - [iam-role-for-service-accounts-eks](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-for-service-accounts-eks) - Create IAM role for service accounts (IRSA) for use within EKS clusters
+- [iam-role-saml](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-saml) - Create individual IAM role which can be assumed by users with a SAML Identity Provider
 - [iam-user](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-user) - Add IAM user, login profile and access keys (with PGP enabled or disabled)
 
 ## Authors

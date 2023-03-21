@@ -79,7 +79,7 @@ variable "policy_path" {
 }
 
 variable "policies" {
-  description = "Map of IAM policies to be added to the IAM group"
+  description = "Policies to attach to the IAM role in `{'static_name' = 'policy_arn'}` format"
   type        = map(string)
   default     = {}
 }

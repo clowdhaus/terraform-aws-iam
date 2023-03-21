@@ -11,6 +11,8 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 - `iam-assumable-role-with-saml` has been renamed to `iam-role-saml`
 - `iam-assumable-roles` has been removed; `iam-role` should be used instead. See the [`iam-role` example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role) that shows an example replacement implementation.
 - `iam-assumable-roles-with-saml` has been removed; `iam-role-saml` should be used instead. See the [`iam-role-saml` example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-saml) that shows an example replacement implementation.
+- `iam-github-oidc-provider` has been renamed to `iam-oidc-provider`
+- `iam-github-oidc-role` has been removed; `iam-role-oidc` should be used instead. See the [`iam-oidc-provider` example](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-oidc-provider)
 - `iam-group-with-assumable-roles-policy` has been removed; the renamed `iam-group` (was `iam-group-with-policies`) should be used instead
 - `iam-eks-role` has been removed; `iam-role-for-service-accounts-eks` should be used instead
 - `iam-policy` has been removed; the `aws_iam_policy` resource should be used directly instead

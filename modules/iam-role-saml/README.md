@@ -46,7 +46,7 @@ No modules.
 | <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Name prefix to use on IAM role created | `string` | `null` | no |
 | <a name="input_path"></a> [path](#input\_path) | Path of IAM role | `string` | `"/"` | no |
 | <a name="input_permissions_boundary"></a> [permissions\_boundary](#input\_permissions\_boundary) | ARN of the policy that is used to set the permissions boundary for the IAM role | `string` | `null` | no |
-| <a name="input_policies"></a> [policies](#input\_policies) | Map of IAM policies to be added to the IAM role | `map(string)` | `{}` | no |
+| <a name="input_policies"></a> [policies](#input\_policies) | Policies to attach to the IAM role in `{'static_name' = 'policy_arn'}` format | `map(string)` | `{}` | no |
 | <a name="input_saml_endpoints"></a> [saml\_endpoints](#input\_saml\_endpoints) | List of AWS SAML endpoints | `list(string)` | <pre>[<br>  "https://signin.aws.amazon.com/saml"<br>]</pre> | no |
 | <a name="input_saml_provider_ids"></a> [saml\_provider\_ids](#input\_saml\_provider\_ids) | List of SAML provider IDs | `list(string)` | `[]` | no |
 | <a name="input_saml_trust_actions"></a> [saml\_trust\_actions](#input\_saml\_trust\_actions) | Additional assume role trust actions for the SAML federated statement | `list(string)` | `[]` | no |

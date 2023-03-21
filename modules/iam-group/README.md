@@ -44,7 +44,7 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | The group's name. The name must consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: `=,.@-_.` | `string` | `""` | no |
 | <a name="input_path"></a> [path](#input\_path) | Path in which to create the group | `string` | `null` | no |
 | <a name="input_permission_statements"></a> [permission\_statements](#input\_permission\_statements) | List of IAM policy [statements](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document#statement) for the policy | `any` | `[]` | no |
-| <a name="input_policies"></a> [policies](#input\_policies) | Map of IAM policies to be added to the IAM group | `map(string)` | `{}` | no |
+| <a name="input_policies"></a> [policies](#input\_policies) | Policies to attach to the IAM role in `{'static_name' = 'policy_arn'}` format | `map(string)` | `{}` | no |
 | <a name="input_policy_description"></a> [policy\_description](#input\_policy\_description) | Description of the IAM policy | `string` | `null` | no |
 | <a name="input_policy_name_prefix"></a> [policy\_name\_prefix](#input\_policy\_name\_prefix) | Name prefix for IAM policy | `string` | `null` | no |
 | <a name="input_policy_path"></a> [policy\_path](#input\_policy\_path) | The IAM policy path | `string` | `null` | no |

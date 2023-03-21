@@ -2,7 +2,13 @@ data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 
 locals {
-  oidc_providers = [for url in var.oidc_provider_urls : replace(url, "https://", "")]
+  account_id = data.aws_caller_identity.current.account_id
+  partition  = data.aws_partition.current.partition
+
+  oidc_providers     = [for url in var.oidc_provider_urls : replace(url, "https://", "")]
+  github_provider    = coalesce(one(local.oidc_providers), "token.actions.githubusercontent.com")
+  bitbucket_provider = one(local.oidc_providers)
+
   name_condition = var.name != null ? var.name : "${var.name_prefix}*"
 }
 
@@ -30,13 +36,14 @@ data "aws_iam_policy_document" "this" {
       condition {
         test     = "ArnLike"
         variable = "aws:PrincipalArn"
-        values   = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role${var.path}${local.name_condition}"]
+        values   = ["arn:${local.partition}:iam::${local.account_id}:role${var.path}${local.name_condition}"]
       }
     }
   }
 
+  # Generic OIDC
   dynamic "statement" {
-    for_each = local.oidc_providers
+    for_each = !var.enable_github_oidc ? local.oidc_providers : []
 
     content {
       effect  = "Allow"
@@ -45,41 +52,109 @@ data "aws_iam_policy_document" "this" {
       principals {
         type = "Federated"
 
-        identifiers = ["arn:${data.aws_partition.current.partition}:iam::${coalesce(var.oidc_account_id, data.aws_caller_identity.current.account_id)}:oidc-provider/${statement.value}"]
+        identifiers = ["arn:${local.partition}:iam::${coalesce(var.oidc_account_id, local.account_id)}:oidc-provider/${statement.value}"]
       }
 
       dynamic "condition" {
-        for_each = length(var.oidc_fully_qualified_subjects) > 0 ? local.oidc_providers : []
+        for_each = length(var.oidc_subjects) > 0 ? local.oidc_providers : []
 
         content {
           test     = "StringEquals"
           variable = "${statement.value}:sub"
-          values   = var.oidc_fully_qualified_subjects
+          values   = var.oidc_subjects
         }
       }
 
       dynamic "condition" {
-        for_each = length(var.oidc_subjects_with_wildcards) > 0 ? local.oidc_providers : []
+        for_each = length(var.oidc_wildcard_subjects) > 0 ? local.oidc_providers : []
 
         content {
           test     = "StringLike"
           variable = "${statement.value}:sub"
-          values   = var.oidc_subjects_with_wildcards
+          values   = var.oidc_wildcard_subjects
         }
       }
 
       dynamic "condition" {
-        for_each = length(var.oidc_fully_qualified_audiences) > 0 ? local.oidc_providers : []
+        for_each = length(var.oidc_audiences) > 0 ? local.oidc_providers : []
 
         content {
           test     = "StringLike"
           variable = "${statement.value}:aud"
-          values   = var.oidc_fully_qualified_audiences
+          values   = var.oidc_audiences
         }
       }
     }
   }
 
+  # GitHub OIDC
+  dynamic "statement" {
+    for_each = var.enable_github_oidc ? [1] : []
+
+    content {
+      sid = "GithubOidcAuth"
+      actions = [
+        "sts:TagSession",
+        "sts:AssumeRoleWithWebIdentity"
+      ]
+
+      principals {
+        type        = "Federated"
+        identifiers = ["arn:${local.partition}:iam::${local.account_id}:oidc-provider/${local.github_provider}"]
+      }
+
+      condition {
+        test     = "ForAllValues:StringEquals"
+        variable = "token.actions.githubusercontent.com:iss"
+        values   = ["http://token.actions.githubusercontent.com"]
+      }
+
+      condition {
+        test     = "ForAllValues:StringEquals"
+        variable = "${local.github_provider}:aud"
+        values   = coalescelist(var.oidc_audiences, ["sts.amazonaws.com"])
+      }
+
+      condition {
+        test     = "StringLike"
+        variable = "${local.github_provider}:sub"
+        # Strip `repo:` to normalize for cases where users may prepend it
+        values = [for subject in var.oidc_subjects : "repo:${trimprefix(subject, "repo:")}"]
+      }
+    }
+  }
+
+  # Bitbucket OIDC
+  dynamic "statement" {
+    for_each = var.enable_bitbucket_oidc ? [1] : []
+
+    content {
+      sid = "BitbucketOidcAuth"
+      actions = [
+        "sts:TagSession",
+        "sts:AssumeRoleWithWebIdentity"
+      ]
+
+      principals {
+        type        = "Federated"
+        identifiers = ["arn:${local.partition}:iam::${local.account_id}:oidc-provider/${local.bitbucket_provider}"]
+      }
+
+      condition {
+        test     = "ForAllValues:StringEquals"
+        variable = "${local.bitbucket_provider}:aud"
+        values   = coalescelist(var.oidc_audiences, ["sts.amazonaws.com"])
+      }
+
+      condition {
+        test     = "StringLike"
+        variable = "${local.bitbucket_provider}:sub"
+        values   = var.oidc_subjects
+      }
+    }
+  }
+
+  # Generic statements
   dynamic "statement" {
     for_each = var.assume_role_policy_statements
 

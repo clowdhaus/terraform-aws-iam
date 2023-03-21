@@ -63,7 +63,7 @@ variable "assume_role_policy_statements" {
 }
 
 variable "policies" {
-  description = "Map of IAM policies to be added to the IAM role"
+  description = "Policies to attach to the IAM role in `{'static_name' = 'policy_arn'}` format"
   type        = map(string)
   default     = {}
 }
@@ -80,20 +80,32 @@ variable "oidc_provider_urls" {
   default     = []
 }
 
-variable "oidc_fully_qualified_subjects" {
+variable "oidc_subjects" {
   description = "The fully qualified OIDC subjects to be added to the role policy"
   type        = set(string)
   default     = []
 }
 
-variable "oidc_subjects_with_wildcards" {
+variable "oidc_wildcard_subjects" {
   description = "The OIDC subject using wildcards to be added to the role policy"
   type        = set(string)
   default     = []
 }
 
-variable "oidc_fully_qualified_audiences" {
+variable "oidc_audiences" {
   description = "The audience to be added to the role policy. Set to sts.amazonaws.com for cross-account assumable role. Leave empty otherwise."
   type        = set(string)
   default     = []
+}
+
+variable "enable_github_oidc" {
+  description = "Enable GitHub OIDC provider trust for the role"
+  type        = bool
+  default     = false
+}
+
+variable "enable_bitbucket_oidc" {
+  description = "Enable Bitbucket OIDC provider trust for the role"
+  type        = bool
+  default     = false
 }

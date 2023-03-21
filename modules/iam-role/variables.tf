@@ -63,7 +63,7 @@ variable "assume_role_policy_statements" {
 }
 
 variable "policies" {
-  description = "Map of IAM policies to be added to the IAM role"
+  description = "Policies to attach to the IAM role in `{'static_name' = 'policy_arn'}` format"
   type        = map(string)
   default     = {}
 }
