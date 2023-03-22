@@ -106,8 +106,8 @@ variable "attach_cluster_autoscaler_policy" {
   default     = false
 }
 
-variable "cluster_autoscaler_cluster_ids" {
-  description = "List of cluster IDs to appropriately scope permissions within the Cluster Autoscaler IAM policy"
+variable "cluster_autoscaler_cluster_names" {
+  description = "List of cluster names to appropriately scope permissions within the Cluster Autoscaler IAM policy"
   type        = list(string)
   default     = []
 }
@@ -184,8 +184,8 @@ variable "attach_karpenter_controller_policy" {
   default     = false
 }
 
-variable "karpenter_controller_cluster_id" {
-  description = "Cluster ID where the Karpenter controller is provisioned/managing"
+variable "karpenter_controller_cluster_name" {
+  description = "Name of cluster where the Karpenter controller is provisioned"
   type        = string
   default     = "*"
 }

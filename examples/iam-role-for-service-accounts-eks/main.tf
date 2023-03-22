@@ -55,7 +55,7 @@ module "cert_manager_irsa_role" {
   cert_manager_hosted_zone_arns = ["arn:aws:route53:::hostedzone/IClearlyMadeThisUp"]
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:cert-manager"]
     }
@@ -69,10 +69,10 @@ module "cluster_autoscaler_irsa_role" {
 
   role_name                        = "cluster-autoscaler"
   attach_cluster_autoscaler_policy = true
-  cluster_autoscaler_cluster_ids   = [module.eks.cluster_id]
+  cluster_autoscaler_cluster_names = [module.eks.cluster_name]
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:cluster-autoscaler"]
     }
@@ -88,7 +88,7 @@ module "ebs_csi_irsa_role" {
   attach_ebs_csi_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
     }
@@ -104,7 +104,7 @@ module "efs_csi_irsa_role" {
   attach_efs_csi_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:efs-csi-controller-sa"]
     }
@@ -121,7 +121,7 @@ module "external_dns_irsa_role" {
   external_dns_hosted_zone_arns = ["arn:aws:route53:::hostedzone/IClearlyMadeThisUp"]
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:external-dns"]
     }
@@ -139,7 +139,7 @@ module "external_secrets_irsa_role" {
   external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:bar"]
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["default:kubernetes-external-secrets"]
     }
@@ -155,7 +155,7 @@ module "fsx_lustre_csi_irsa_role" {
   attach_fsx_lustre_csi_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:fsx-csi-controller-sa"]
     }
@@ -168,11 +168,11 @@ module "karpenter_controller_irsa_role" {
   role_name                          = "karpenter-controller"
   attach_karpenter_controller_policy = true
 
-  karpenter_controller_cluster_id         = module.eks.cluster_id
+  karpenter_controller_cluster_name       = module.eks.cluster_name
   karpenter_controller_node_iam_role_arns = [module.eks.eks_managed_node_groups["default"].iam_role_arn]
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["karpenter:karpenter"]
     }
@@ -188,7 +188,7 @@ module "load_balancer_controller_irsa_role" {
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
     }
@@ -204,7 +204,7 @@ module "load_balancer_controller_targetgroup_binding_only_irsa_role" {
   attach_load_balancer_controller_targetgroup_binding_only_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
     }
@@ -220,7 +220,7 @@ module "appmesh_controller_irsa_role" {
   attach_appmesh_controller_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["appmesh-system:appmesh-controller"]
     }
@@ -236,7 +236,7 @@ module "appmesh_envoy_proxy_irsa_role" {
   attach_appmesh_envoy_proxy_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["appmesh-system:appmesh-envoy-proxy"]
     }
@@ -252,7 +252,7 @@ module "amazon_managed_service_prometheus_irsa_role" {
   attach_amazon_managed_service_prometheus_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["prometheus:amp-ingest"]
     }
@@ -268,7 +268,7 @@ module "node_termination_handler_irsa_role" {
   attach_node_termination_handler_policy = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-node"]
     }
@@ -285,7 +285,7 @@ module "velero_irsa_role" {
   velero_s3_bucket_arns = ["arn:aws:s3:::velero-backups"]
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["velero:velero"]
     }
@@ -302,7 +302,7 @@ module "vpc_cni_ipv4_irsa_role" {
   vpc_cni_enable_ipv4   = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-node"]
     }
@@ -319,60 +319,13 @@ module "vpc_cni_ipv6_irsa_role" {
   vpc_cni_enable_ipv6   = true
 
   oidc_providers = {
-    ex = {
+    this = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-node"]
     }
   }
 
   tags = local.tags
-}
-
-################################################################################
-# Custom IRSA Roles
-################################################################################
-
-# This is an example of a custom IRSA role which allows workloads with the specified serviceccount to perform actions in a S3 bucket.
-module "iam_policy" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-policy"
-
-  name        = "myapp"
-  path        = "/"
-  description = "Example policy"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:*",
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-
-}
-
-module "iam_eks_role" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  role_name = "my-app"
-
-  role_policy_arns = {
-    policy = "arn:aws:iam::012345678901:policy/myapp"
-  }
-
-  oidc_providers = {
-    one = {
-      provider_arn               = "arn:aws:iam::012345678901:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/5C54DDF35ER19312844C7333374CC09D"
-      namespace_service_accounts = ["default:my-app-staging", "canary:my-app-staging"]
-    }
-    two = {
-      provider_arn               = "arn:aws:iam::012345678901:oidc-provider/oidc.eks.ap-southeast-1.amazonaws.com/id/5C54DDF35ER54476848E7333374FF09G"
-      namespace_service_accounts = ["default:my-app-staging"]
-    }
-  }
 }
 
 ################################################################################
@@ -395,13 +348,11 @@ module "vpc" {
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/elb"              = 1
+    "kubernetes.io/role/elb" = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/internal-elb"     = 1
+    "kubernetes.io/role/internal-elb" = 1
   }
 
   tags = local.tags
@@ -409,10 +360,10 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 18.21"
+  version = "~> 19.10"
 
   cluster_name    = local.name
-  cluster_version = "1.22"
+  cluster_version = "1.25"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets

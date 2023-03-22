@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
   }
 
   dynamic "statement" {
-    for_each = toset(var.cluster_autoscaler_cluster_ids)
+    for_each = toset(var.cluster_autoscaler_cluster_names)
     content {
       actions = [
         "autoscaling:SetDesiredCapacity",
@@ -570,7 +570,7 @@ data "aws_iam_policy_document" "karpenter_controller" {
     condition {
       test     = "StringEquals"
       variable = "ec2:ResourceTag/${var.karpenter_tag_key}"
-      values   = [var.karpenter_controller_cluster_id]
+      values   = [var.karpenter_controller_cluster_name]
     }
   }
 
@@ -583,7 +583,7 @@ data "aws_iam_policy_document" "karpenter_controller" {
     condition {
       test     = "StringEquals"
       variable = "ec2:ResourceTag/${var.karpenter_tag_key}"
-      values   = [var.karpenter_controller_cluster_id]
+      values   = [var.karpenter_controller_cluster_name]
     }
   }
 
@@ -612,7 +612,7 @@ data "aws_iam_policy_document" "karpenter_controller" {
 
   statement {
     actions   = ["eks:DescribeCluster"]
-    resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${var.karpenter_controller_cluster_id}"]
+    resources = ["arn:${local.partition}:eks:${local.region}:${local.account_id}:cluster/${var.karpenter_controller_cluster_name}"]
   }
 
   dynamic "statement" {
