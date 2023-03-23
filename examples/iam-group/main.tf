@@ -22,8 +22,8 @@ module "iam_group" {
   name = "production-admins"
 
   users = [
-    module.iam_user1.iam_user_name,
-    module.iam_user2.iam_user_name,
+    module.iam_user1.name,
+    module.iam_user2.name,
   ]
 
   permission_statements = [
@@ -56,8 +56,8 @@ module "iam_user1" {
 
   name = "${local.name}-user1"
 
-  create_iam_user_login_profile = false
-  create_iam_access_key         = false
+  create_login_profile = false
+  create_access_key    = false
 
   tags = local.tags
 }
@@ -67,8 +67,8 @@ module "iam_user2" {
 
   name = "${local.name}-user2"
 
-  create_iam_user_login_profile = false
-  create_iam_access_key         = false
+  create_login_profile = false
+  create_access_key    = false
 
   tags = local.tags
 }
