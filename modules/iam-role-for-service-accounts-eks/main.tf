@@ -14,6 +14,22 @@ data "aws_iam_policy_document" "this" {
   count = var.create_role ? 1 : 0
 
   dynamic "statement" {
+    for_each = var.enable_irsa_v2 ? [1] : []
+
+    content {
+      sid     = "EksAssume"
+      effect  = "Allow"
+      actions = ["sts:AssumeRole"]
+
+      principals {
+        # identifier subject to change
+        type        = "Service"
+        identifiers = ["eks-pods.${local.dns_suffix}"]
+      }
+    }
+  }
+
+  dynamic "statement" {
     # https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/
     for_each = var.allow_self_assume_role ? [1] : []
 

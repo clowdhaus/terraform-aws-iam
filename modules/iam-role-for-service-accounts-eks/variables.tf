@@ -82,6 +82,12 @@ variable "allow_self_assume_role" {
   default     = false
 }
 
+variable "enable_irsa_v2" {
+  description = "Determines whether to add the new IRSAv2 IAM assume role trust policy"
+  type        = bool
+  default     = false
+}
+
 ################################################################################
 # Policies
 ################################################################################
