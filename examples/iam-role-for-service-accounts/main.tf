@@ -22,15 +22,15 @@ locals {
 ################################################################################
 
 module "disabled" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+  source = "../../modules/iam-role-for-service-accounts"
 
-  create_role = false
+  create = false
 }
 
-module "irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name = local.name
+  name = local.name
 
   oidc_providers = {
     one = {
@@ -43,7 +43,7 @@ module "irsa_role" {
     }
   }
 
-  role_policy_arns = {
+  policies = {
     AmazonEKS_CNI_Policy = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
     additional           = aws_iam_policy.additional.arn
   }
@@ -51,10 +51,11 @@ module "irsa_role" {
   tags = local.tags
 }
 
-module "cert_manager_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "cert_manager_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                     = "cert-manager"
+  name = "cert-manager"
+
   attach_cert_manager_policy    = true
   cert_manager_hosted_zone_arns = ["arn:aws:route53:::hostedzone/IClearlyMadeThisUp"]
 
@@ -68,10 +69,11 @@ module "cert_manager_irsa_role" {
   tags = local.tags
 }
 
-module "cluster_autoscaler_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "cluster_autoscaler_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                        = "cluster-autoscaler"
+  name = "cluster-autoscaler"
+
   attach_cluster_autoscaler_policy = true
   cluster_autoscaler_cluster_names = [module.eks.cluster_name]
 
@@ -85,10 +87,11 @@ module "cluster_autoscaler_irsa_role" {
   tags = local.tags
 }
 
-module "ebs_csi_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "ebs_csi_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name             = "ebs-csi"
+  name = "ebs-csi"
+
   attach_ebs_csi_policy = true
 
   oidc_providers = {
@@ -101,10 +104,11 @@ module "ebs_csi_irsa_role" {
   tags = local.tags
 }
 
-module "efs_csi_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "efs_csi_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name             = "efs-csi"
+  name = "efs-csi"
+
   attach_efs_csi_policy = true
 
   oidc_providers = {
@@ -117,10 +121,11 @@ module "efs_csi_irsa_role" {
   tags = local.tags
 }
 
-module "external_dns_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "external_dns_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                     = "external-dns"
+  name = "external-dns"
+
   attach_external_dns_policy    = true
   external_dns_hosted_zone_arns = ["arn:aws:route53:::hostedzone/IClearlyMadeThisUp"]
 
@@ -134,10 +139,11 @@ module "external_dns_irsa_role" {
   tags = local.tags
 }
 
-module "external_secrets_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "external_secrets_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                             = "external-secrets"
+  name = "external-secrets"
+
   attach_external_secrets_policy        = true
   external_secrets_ssm_parameter_arns   = ["arn:aws:ssm:*:*:parameter/foo"]
   external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:bar"]
@@ -152,10 +158,11 @@ module "external_secrets_irsa_role" {
   tags = local.tags
 }
 
-module "fsx_lustre_csi_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "fsx_lustre_csi_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                    = "fsx-lustre-csi"
+  name = "fsx-lustre-csi"
+
   attach_fsx_lustre_csi_policy = true
 
   oidc_providers = {
@@ -164,16 +171,18 @@ module "fsx_lustre_csi_irsa_role" {
       namespace_service_accounts = ["kube-system:fsx-csi-controller-sa"]
     }
   }
+
+  tags = local.tags
 }
 
-module "karpenter_controller_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "karpenter_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                          = "karpenter-controller"
-  attach_karpenter_controller_policy = true
+  name = "karpenter"
 
-  karpenter_controller_cluster_name       = module.eks.cluster_name
-  karpenter_controller_node_iam_role_arns = [module.eks.eks_managed_node_groups["default"].iam_role_arn]
+  attach_karpenter_policy      = true
+  karpenter_cluster_name       = module.eks.cluster_name
+  karpenter_node_iam_role_arns = [module.eks.eks_managed_node_groups["default"].iam_role_arn]
 
   oidc_providers = {
     this = {
@@ -185,10 +194,11 @@ module "karpenter_controller_irsa_role" {
   tags = local.tags
 }
 
-module "load_balancer_controller_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "load_balancer_controller_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                              = "load-balancer-controller"
+  name = "load-balancer-controller"
+
   attach_load_balancer_controller_policy = true
 
   oidc_providers = {
@@ -201,10 +211,11 @@ module "load_balancer_controller_irsa_role" {
   tags = local.tags
 }
 
-module "load_balancer_controller_targetgroup_binding_only_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "load_balancer_controller_targetgroup_binding_only_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                                                       = "load-balancer-controller-targetgroup-binding-only"
+  name = "load-balancer-controller-targetgroup-binding-only"
+
   attach_load_balancer_controller_targetgroup_binding_only_policy = true
 
   oidc_providers = {
@@ -217,10 +228,11 @@ module "load_balancer_controller_targetgroup_binding_only_irsa_role" {
   tags = local.tags
 }
 
-module "appmesh_controller_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "appmesh_controller_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                        = "appmesh-controller"
+  name = "appmesh-controller"
+
   attach_appmesh_controller_policy = true
 
   oidc_providers = {
@@ -233,10 +245,11 @@ module "appmesh_controller_irsa_role" {
   tags = local.tags
 }
 
-module "appmesh_envoy_proxy_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "appmesh_envoy_proxy_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                         = "appmesh-envoy-proxy"
+  name = "appmesh-envoy-proxy"
+
   attach_appmesh_envoy_proxy_policy = true
 
   oidc_providers = {
@@ -249,10 +262,11 @@ module "appmesh_envoy_proxy_irsa_role" {
   tags = local.tags
 }
 
-module "amazon_managed_service_prometheus_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "amazon_managed_service_prometheus_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                                       = "amazon-managed-service-prometheus"
+  name = "amazon-managed-service-prometheus"
+
   attach_amazon_managed_service_prometheus_policy = true
 
   oidc_providers = {
@@ -265,10 +279,11 @@ module "amazon_managed_service_prometheus_irsa_role" {
   tags = local.tags
 }
 
-module "node_termination_handler_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "node_termination_handler_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name                              = "node-termination-handler"
+  name = "node-termination-handler"
+
   attach_node_termination_handler_policy = true
 
   oidc_providers = {
@@ -281,10 +296,11 @@ module "node_termination_handler_irsa_role" {
   tags = local.tags
 }
 
-module "velero_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "velero_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name             = "velero"
+  name = "velero"
+
   attach_velero_policy  = true
   velero_s3_bucket_arns = ["arn:aws:s3:::velero-backups"]
 
@@ -298,10 +314,11 @@ module "velero_irsa_role" {
   tags = local.tags
 }
 
-module "vpc_cni_ipv4_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "vpc_cni_ipv4_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name             = "vpc-cni-ipv4"
+  name = "vpc-cni-ipv4"
+
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
 
@@ -315,10 +332,11 @@ module "vpc_cni_ipv4_irsa_role" {
   tags = local.tags
 }
 
-module "vpc_cni_ipv6_irsa_role" {
-  source = "../../modules/iam-role-for-service-accounts-eks"
+module "vpc_cni_ipv6_irsa" {
+  source = "../../modules/iam-role-for-service-accounts"
 
-  role_name             = "vpc-cni-ipv6"
+  name = "vpc-cni-ipv6"
+
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv6   = true
 

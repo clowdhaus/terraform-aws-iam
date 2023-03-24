@@ -1,79 +1,53 @@
-variable "create_role" {
-  description = "Whether to create a role"
+variable "create" {
+  description = "Controls if resources should be created (affects all resources)"
   type        = bool
   default     = true
 }
 
-variable "role_name" {
-  description = "Name of IAM role"
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
+################################################################################
+# IAM Role
+################################################################################
+
+variable "name" {
+  description = "Name to use on IAM role created"
   type        = string
   default     = null
 }
 
-variable "role_path" {
+variable "name_prefix" {
+  description = "Name prefix to use on IAM role created"
+  type        = string
+  default     = null
+}
+
+variable "path" {
   description = "Path of IAM role"
   type        = string
   default     = "/"
 }
 
-variable "role_permissions_boundary_arn" {
-  description = "Permissions boundary ARN to use for IAM role"
+variable "description" {
+  description = "Description of the role"
   type        = string
   default     = null
-}
-
-variable "role_description" {
-  description = "IAM Role description"
-  type        = string
-  default     = null
-}
-
-variable "role_name_prefix" {
-  description = "IAM role name prefix"
-  type        = string
-  default     = null
-}
-
-variable "policy_name_prefix" {
-  description = "IAM policy name prefix"
-  type        = string
-  default     = "AmazonEKS_"
-}
-
-variable "role_policy_arns" {
-  description = "ARNs of any policies to attach to the IAM role"
-  type        = map(string)
-  default     = {}
-}
-
-variable "oidc_providers" {
-  description = "Map of OIDC providers where each provider map should contain the `provider`, `provider_arn`, and `namespace_service_accounts`"
-  type        = any
-  default     = {}
-}
-
-variable "tags" {
-  description = "A map of tags to add the the IAM role"
-  type        = map(any)
-  default     = {}
-}
-
-variable "force_detach_policies" {
-  description = "Whether policies should be detached from this role when destroying"
-  type        = bool
-  default     = true
 }
 
 variable "max_session_duration" {
-  description = "Maximum CLI/API session duration in seconds between 3600 and 43200"
+  description = "Maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours"
   type        = number
   default     = null
 }
 
-variable "assume_role_condition_test" {
-  description = "Name of the [IAM condition operator](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html) to evaluate when assuming the role"
+variable "permissions_boundary" {
+  description = "ARN of the policy that is used to set the permissions boundary for the IAM role"
   type        = string
-  default     = "StringEquals"
+  default     = null
 }
 
 variable "allow_self_assume_role" {
@@ -82,10 +56,38 @@ variable "allow_self_assume_role" {
   default     = false
 }
 
+variable "assume_role_condition_test" {
+  description = "Name of the [IAM condition operator](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html) to evaluate when assuming the role"
+  type        = string
+  default     = "StringEquals"
+}
+
 variable "enable_irsa_v2" {
   description = "Determines whether to add the new IRSAv2 IAM assume role trust policy"
   type        = bool
   default     = false
+}
+
+variable "policies" {
+  description = "Policies to attach to the IAM role in `{'static_name' = 'policy_arn'}` format"
+  type        = map(string)
+  default     = {}
+}
+
+################################################################################
+# IAM Policy
+################################################################################
+
+variable "policy_name_prefix" {
+  description = "IAM policy name prefix"
+  type        = string
+  default     = "AmazonEKS_"
+}
+
+variable "oidc_providers" {
+  description = "Map of OIDC providers where each provider map should contain the `provider`, `provider_arn`, and `namespace_service_accounts`"
+  type        = any
+  default     = {}
 }
 
 ################################################################################
@@ -183,15 +185,15 @@ variable "fsx_lustre_csi_service_role_arns" {
   default     = ["arn:aws:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.amazonaws.com/*"]
 }
 
-# Karpenter controller
-variable "attach_karpenter_controller_policy" {
-  description = "Determines whether to attach the Karpenter Controller policy to the role"
+# Karpenter
+variable "attach_karpenter_policy" {
+  description = "Determines whether to attach the Karpenter policy to the role"
   type        = bool
   default     = false
 }
 
-variable "karpenter_controller_cluster_name" {
-  description = "Name of cluster where the Karpenter controller is provisioned"
+variable "karpenter_cluster_name" {
+  description = "Name of cluster where the Karpenter is provisioned"
   type        = string
   default     = "*"
 }
@@ -202,14 +204,14 @@ variable "karpenter_tag_key" {
   default     = "karpenter.sh/discovery"
 }
 
-variable "karpenter_controller_ssm_parameter_arns" {
+variable "karpenter_ssm_parameter_arns" {
   description = "List of SSM Parameter ARNs that contain AMI IDs launched by Karpenter"
   type        = list(string)
   # https://github.com/aws/karpenter/blob/ed9473a9863ca949b61b9846c8b9f33f35b86dbd/pkg/cloudprovider/aws/ami.go#L105-L123
   default = ["arn:aws:ssm:*:*:parameter/aws/service/*"]
 }
 
-variable "karpenter_controller_node_iam_role_arns" {
+variable "karpenter_node_iam_role_arns" {
   description = "List of node IAM role ARNs Karpenter can use to launch nodes"
   type        = list(string)
   default     = ["*"]

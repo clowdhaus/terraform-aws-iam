@@ -3,15 +3,20 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  account_id          = data.aws_caller_identity.current.account_id
-  partition           = data.aws_partition.current.partition
-  dns_suffix          = data.aws_partition.current.dns_suffix
-  region              = data.aws_region.current.name
-  role_name_condition = var.role_name != null ? var.role_name : "${var.role_name_prefix}*"
+  account_id = data.aws_caller_identity.current.account_id
+  partition  = data.aws_partition.current.partition
+  dns_suffix = data.aws_partition.current.dns_suffix
+  region     = data.aws_region.current.name
+
+  name_condition = var.name != null ? var.name : "${var.name_prefix}*"
 }
 
+################################################################################
+# IAM Role
+################################################################################
+
 data "aws_iam_policy_document" "this" {
-  count = var.create_role ? 1 : 0
+  count = var.create ? 1 : 0
 
   dynamic "statement" {
     for_each = var.enable_irsa_v2 ? [1] : []
@@ -46,7 +51,7 @@ data "aws_iam_policy_document" "this" {
       condition {
         test     = "ArnLike"
         variable = "aws:PrincipalArn"
-        values   = ["arn:${local.partition}:iam::${local.account_id}:role${var.role_path}${local.role_name_condition}"]
+        values   = ["arn:${local.partition}:iam::${local.account_id}:role${var.path}${local.name_condition}"]
       }
     }
   }
@@ -81,23 +86,23 @@ data "aws_iam_policy_document" "this" {
 }
 
 resource "aws_iam_role" "this" {
-  count = var.create_role ? 1 : 0
+  count = var.create ? 1 : 0
 
-  name        = var.role_name
-  name_prefix = var.role_name_prefix
-  path        = var.role_path
-  description = var.role_description
+  name        = var.name
+  name_prefix = var.name_prefix
+  path        = var.path
+  description = var.description
 
   assume_role_policy    = data.aws_iam_policy_document.this[0].json
   max_session_duration  = var.max_session_duration
-  permissions_boundary  = var.role_permissions_boundary_arn
-  force_detach_policies = var.force_detach_policies
+  permissions_boundary  = var.permissions_boundary
+  force_detach_policies = true
 
   tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  for_each = { for k, v in var.role_policy_arns : k => v if var.create_role }
+  for_each = { for k, v in var.policies : k => v if var.create }
 
   role       = aws_iam_role.this[0].name
   policy_arn = each.value

@@ -112,9 +112,9 @@ Creates an IAM role that is suitable for EKS IAM role for service accounts (IRSA
 
 ```hcl
 module "vpc_cni_irsa" {
-  source      = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source      = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts"
 
-  role_name   = "vpc-cni"
+  name   = "vpc-cni"
 
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true
@@ -248,7 +248,7 @@ module "iam_user" {
 - [iam-oidc-provider](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-oidc-provider) - Create an OpenID connect provider and IAM role which can be assumed from specified subjects federated from the OIDC provider
 - [iam-read-only-policy](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-read-only-policy) - Create IAM read-only policy
 - [iam-role](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role) - Create individual IAM role which can be assumed from specified ARNs (AWS accounts, IAM users, etc)
-- [iam-role-for-service-accounts-eks](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-for-service-accounts-eks) - Create IAM role for service accounts (IRSA) for use within EKS clusters
+- [iam-role-for-service-accounts](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-for-service-accounts) - Create IAM role for service accounts (IRSA) for use within EKS clusters
 - [iam-role-saml](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-role-saml) - Create individual IAM role which can be assumed by users with a SAML Identity Provider
 - [iam-user](https://github.com/terraform-aws-modules/terraform-aws-iam/tree/master/examples/iam-user) - Add IAM user, login profile and access keys (with PGP enabled or disabled)
 
