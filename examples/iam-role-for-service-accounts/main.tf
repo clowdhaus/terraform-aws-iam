@@ -18,6 +18,49 @@ locals {
 }
 
 ################################################################################
+# IRSAv2 Roles
+################################################################################
+
+module "irsa_v2_empty" {
+  source = "../../modules/iam-role-for-service-accounts"
+
+  name = "${local.name}-v2"
+
+  enable_irsa_v2 = true
+
+  tags = local.tags
+}
+
+module "ebs_csi_irsa_v2" {
+  source = "../../modules/iam-role-for-service-accounts"
+
+  name = "ebs-csi-v2"
+
+  enable_irsa_v2        = true
+  attach_ebs_csi_policy = true
+
+  tags = local.tags
+}
+
+module "irsa_v2_custom_policy" {
+  source = "../../modules/iam-role-for-service-accounts"
+
+  name = "${local.name}-custom-name"
+
+  enable_irsa_v2 = true
+  policy_statements = [
+    {
+      sid       = "DescribeEc2"
+      actions   = ["ec2:Describe*"]
+      effect    = "Allow"
+      resources = ["*"]
+    }
+  ]
+
+  tags = local.tags
+}
+
+################################################################################
 # IRSA Roles
 ################################################################################
 
@@ -365,7 +408,8 @@ module "vpc" {
   private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
 
-  enable_nat_gateway   = false
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
   enable_dns_hostnames = true
 
   public_subnet_tags = {
@@ -388,6 +432,10 @@ module "eks" {
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
+
+  eks_managed_node_groups = {
+    default = {}
+  }
 
   tags = local.tags
 }

@@ -26,24 +26,6 @@ data "aws_iam_policy_document" "cert_manager" {
   }
 }
 
-resource "aws_iam_policy" "cert_manager" {
-  count = var.create && var.attach_cert_manager_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Cert_Manager_Policy-"
-  path        = var.path
-  description = "Cert Manager policy to allow management of Route53 hosted zone records"
-  policy      = data.aws_iam_policy_document.cert_manager[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "cert_manager" {
-  count = var.create && var.attach_cert_manager_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.cert_manager[0].arn
-}
-
 ################################################################################
 # Cluster Autoscaler Policy
 ################################################################################
@@ -85,24 +67,6 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
       }
     }
   }
-}
-
-resource "aws_iam_policy" "cluster_autoscaler" {
-  count = var.create && var.attach_cluster_autoscaler_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Cluster_Autoscaler_Policy-"
-  path        = var.path
-  description = "Cluster autoscaler policy to allow examination and modification of EC2 Auto Scaling Groups"
-  policy      = data.aws_iam_policy_document.cluster_autoscaler[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "cluster_autoscaler" {
-  count = var.create && var.attach_cluster_autoscaler_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.cluster_autoscaler[0].arn
 }
 
 ################################################################################
@@ -293,24 +257,6 @@ data "aws_iam_policy_document" "ebs_csi" {
   }
 }
 
-resource "aws_iam_policy" "ebs_csi" {
-  count = var.create && var.attach_ebs_csi_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}EBS_CSI_Policy-"
-  path        = var.path
-  description = "Provides permissions to manage EBS volumes via the container storage interface driver"
-  policy      = data.aws_iam_policy_document.ebs_csi[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "ebs_csi" {
-  count = var.create && var.attach_ebs_csi_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.ebs_csi[0].arn
-}
-
 ################################################################################
 # EFS CSI Driver Policy
 ################################################################################
@@ -364,24 +310,6 @@ data "aws_iam_policy_document" "efs_csi" {
   }
 }
 
-resource "aws_iam_policy" "efs_csi" {
-  count = var.create && var.attach_efs_csi_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}EFS_CSI_Policy-"
-  path        = var.path
-  description = "Provides permissions to manage EFS volumes via the container storage interface driver"
-  policy      = data.aws_iam_policy_document.efs_csi[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "efs_csi" {
-  count = var.create && var.attach_efs_csi_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.efs_csi[0].arn
-}
-
 ################################################################################
 # External DNS Policy
 ################################################################################
@@ -403,24 +331,6 @@ data "aws_iam_policy_document" "external_dns" {
 
     resources = ["*"]
   }
-}
-
-resource "aws_iam_policy" "external_dns" {
-  count = var.create && var.attach_external_dns_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}External_DNS_Policy-"
-  path        = var.path
-  description = "External DNS policy to allow management of Route53 hosted zone records"
-  policy      = data.aws_iam_policy_document.external_dns[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "external_dns" {
-  count = var.create && var.attach_external_dns_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.external_dns[0].arn
 }
 
 ################################################################################
@@ -453,24 +363,6 @@ data "aws_iam_policy_document" "external_secrets" {
     ]
     resources = var.external_secrets_secrets_manager_arns
   }
-}
-
-resource "aws_iam_policy" "external_secrets" {
-  count = var.create && var.attach_external_secrets_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}External_Secrets_Policy-"
-  path        = var.path
-  description = "Provides permissions to for External Secrets to retrieve secrets from AWS SSM and AWS Secrets Manager"
-  policy      = data.aws_iam_policy_document.external_secrets[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "external_secrets" {
-  count = var.create && var.attach_external_secrets_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.external_secrets[0].arn
 }
 
 ################################################################################
@@ -510,24 +402,6 @@ data "aws_iam_policy_document" "fsx_lustre_csi" {
     ]
     resources = ["*"]
   }
-}
-
-resource "aws_iam_policy" "fsx_lustre_csi" {
-  count = var.create && var.attach_fsx_lustre_csi_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}FSx_Lustre_CSI_Policy-"
-  path        = var.path
-  description = "Provides permissions to manage FSx Lustre volumes via the container storage interface driver"
-  policy      = data.aws_iam_policy_document.fsx_lustre_csi[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "fsx_lustre_csi" {
-  count = var.create && var.attach_fsx_lustre_csi_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.fsx_lustre_csi[0].arn
 }
 
 ################################################################################
@@ -628,24 +502,6 @@ data "aws_iam_policy_document" "karpenter" {
       resources = [var.karpenter_sqs_queue_arn]
     }
   }
-}
-
-resource "aws_iam_policy" "karpenter" {
-  count = var.create && var.attach_karpenter_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Karpenter_Policy-"
-  path        = var.path
-  description = "Provides permissions to handle node termination events via the Node Termination Handler"
-  policy      = data.aws_iam_policy_document.karpenter[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "karpenter" {
-  count = var.create && var.attach_karpenter_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.karpenter[0].arn
 }
 
 ################################################################################
@@ -881,24 +737,6 @@ data "aws_iam_policy_document" "load_balancer_controller" {
   }
 }
 
-resource "aws_iam_policy" "load_balancer_controller" {
-  count = var.create && var.attach_load_balancer_controller_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}AWS_Load_Balancer_Controller-"
-  path        = var.path
-  description = "Provides permissions for AWS Load Balancer Controller addon"
-  policy      = data.aws_iam_policy_document.load_balancer_controller[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "load_balancer_controller" {
-  count = var.create && var.attach_load_balancer_controller_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.load_balancer_controller[0].arn
-}
-
 ################################################################################
 # AWS Load Balancer Controller TargetGroup Binding Only Policy
 ################################################################################
@@ -925,24 +763,6 @@ data "aws_iam_policy_document" "load_balancer_controller_targetgroup_only" {
 
     resources = ["*"]
   }
-}
-
-resource "aws_iam_policy" "load_balancer_controller_targetgroup_only" {
-  count = var.create && var.attach_load_balancer_controller_targetgroup_binding_only_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}AWS_Load_Balancer_Controller_TargetGroup_Only-"
-  path        = var.path
-  description = "Provides permissions for AWS Load Balancer Controller addon in TargetGroup binding only scenario"
-  policy      = data.aws_iam_policy_document.load_balancer_controller_targetgroup_only[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "load_balancer_controller_targetgroup_only" {
-  count = var.create && var.attach_load_balancer_controller_targetgroup_binding_only_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.load_balancer_controller_targetgroup_only[0].arn
 }
 
 ################################################################################
@@ -1040,24 +860,6 @@ data "aws_iam_policy_document" "appmesh_controller" {
   }
 }
 
-resource "aws_iam_policy" "appmesh_controller" {
-  count = var.create && var.attach_appmesh_controller_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Appmesh_Controller-"
-  path        = var.path
-  description = "Provides permissions to for appmesh controller"
-  policy      = data.aws_iam_policy_document.appmesh_controller[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "appmesh_controller" {
-  count = var.create && var.attach_appmesh_controller_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.appmesh_controller[0].arn
-}
-
 ################################################################################
 # Appmesh envoy proxy
 ################################################################################
@@ -1082,24 +884,6 @@ data "aws_iam_policy_document" "appmesh_envoy_proxy" {
   }
 }
 
-resource "aws_iam_policy" "appmesh_envoy_proxy" {
-  count = var.create && var.attach_appmesh_envoy_proxy_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Appmesh_Envoy_Proxy-"
-  path        = var.path
-  description = "Provides permissions to for appmesh envoy proxy"
-  policy      = data.aws_iam_policy_document.appmesh_envoy_proxy[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "appmesh_envoy_proxy" {
-  count = var.create && var.attach_appmesh_envoy_proxy_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.appmesh_envoy_proxy[0].arn
-}
-
 ################################################################################
 # Amazon Managed Service for Prometheus Policy
 ################################################################################
@@ -1119,24 +903,6 @@ data "aws_iam_policy_document" "amazon_managed_service_prometheus" {
 
     resources = var.amazon_managed_service_prometheus_workspace_arns
   }
-}
-
-resource "aws_iam_policy" "amazon_managed_service_prometheus" {
-  count = var.create && var.attach_amazon_managed_service_prometheus_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Managed_Service_Prometheus_Policy-"
-  path        = var.path
-  description = "Provides permissions to for Amazon Managed Service for Prometheus"
-  policy      = data.aws_iam_policy_document.amazon_managed_service_prometheus[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "amazon_managed_service_prometheus" {
-  count = var.create && var.attach_amazon_managed_service_prometheus_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.amazon_managed_service_prometheus[0].arn
 }
 
 ################################################################################
@@ -1166,24 +932,6 @@ data "aws_iam_policy_document" "node_termination_handler" {
 
     resources = var.node_termination_handler_sqs_queue_arns
   }
-}
-
-resource "aws_iam_policy" "node_termination_handler" {
-  count = var.create && var.attach_node_termination_handler_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Node_Termination_Handler_Policy-"
-  path        = var.path
-  description = "Provides permissions to handle node termination events via the Node Termination Handler"
-  policy      = data.aws_iam_policy_document.node_termination_handler[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "node_termination_handler" {
-  count = var.create && var.attach_node_termination_handler_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.node_termination_handler[0].arn
 }
 
 ################################################################################
@@ -1226,24 +974,6 @@ data "aws_iam_policy_document" "velero" {
     ]
     resources = var.velero_s3_bucket_arns
   }
-}
-
-resource "aws_iam_policy" "velero" {
-  count = var.create && var.attach_velero_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}Velero_Policy-"
-  path        = var.path
-  description = "Provides Velero permissions to backup and restore cluster resources"
-  policy      = data.aws_iam_policy_document.velero[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "velero" {
-  count = var.create && var.attach_velero_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.velero[0].arn
 }
 
 ################################################################################
@@ -1296,22 +1026,4 @@ data "aws_iam_policy_document" "vpc_cni" {
     actions   = ["ec2:CreateTags"]
     resources = ["arn:${local.partition}:ec2:*:*:network-interface/*"]
   }
-}
-
-resource "aws_iam_policy" "vpc_cni" {
-  count = var.create && var.attach_vpc_cni_policy ? 1 : 0
-
-  name_prefix = "${var.policy_name_prefix}CNI_Policy-"
-  path        = var.path
-  description = "Provides the Amazon VPC CNI Plugin (amazon-vpc-cni-k8s) the permissions it requires to modify the IPv4/IPv6 address configuration on your EKS worker nodes"
-  policy      = data.aws_iam_policy_document.vpc_cni[0].json
-
-  tags = var.tags
-}
-
-resource "aws_iam_role_policy_attachment" "vpc_cni" {
-  count = var.create && var.attach_vpc_cni_policy ? 1 : 0
-
-  role       = aws_iam_role.this[0].name
-  policy_arn = aws_iam_policy.vpc_cni[0].arn
 }

@@ -50,16 +50,16 @@ variable "permissions_boundary" {
   default     = null
 }
 
-variable "allow_self_assume_role" {
-  description = "Determines whether to allow the role to be [assume itself](https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/)"
-  type        = bool
-  default     = false
-}
-
 variable "assume_role_condition_test" {
   description = "Name of the [IAM condition operator](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html) to evaluate when assuming the role"
   type        = string
   default     = "StringEquals"
+}
+
+variable "oidc_providers" {
+  description = "Map of OIDC providers where each provider map should contain the `provider`, `provider_arn`, and `namespace_service_accounts`"
+  type        = any
+  default     = {}
 }
 
 variable "enable_irsa_v2" {
@@ -78,21 +78,53 @@ variable "policies" {
 # IAM Policy
 ################################################################################
 
-variable "policy_name_prefix" {
-  description = "IAM policy name prefix"
-  type        = string
-  default     = "AmazonEKS_"
+variable "create_policy" {
+  description = "Whether to create an IAM policy that is attached to the IAM role created"
+  type        = bool
+  default     = true
 }
 
-variable "oidc_providers" {
-  description = "Map of OIDC providers where each provider map should contain the `provider`, `provider_arn`, and `namespace_service_accounts`"
+variable "source_policy_documents" {
+  description = "List of IAM policy documents that are merged together into the exported document. Statements must have unique `sid`s"
+  type        = list(string)
+  default     = []
+}
+
+variable "override_policy_documents" {
+  description = "List of IAM policy documents that are merged together into the exported document. In merging, statements with non-blank `sid`s will override statements with the same `sid`"
+  type        = list(string)
+  default     = []
+}
+
+variable "policy_statements" {
+  description = "List of IAM policy [statements](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document#statement)"
   type        = any
-  default     = {}
+  default     = []
 }
 
-################################################################################
-# Policies
-################################################################################
+variable "policy_name" {
+  description = "Name to use on IAM policy created"
+  type        = string
+  default     = null
+}
+
+variable "policy_name_prefix" {
+  description = "Name prefix to use on IAM policy created"
+  type        = string
+  default     = null
+}
+
+variable "policy_path" {
+  description = "Path of IAM policy"
+  type        = string
+  default     = null
+}
+
+variable "policy_description" {
+  description = "IAM policy description"
+  type        = string
+  default     = null
+}
 
 # Cert Manager
 variable "attach_cert_manager_policy" {

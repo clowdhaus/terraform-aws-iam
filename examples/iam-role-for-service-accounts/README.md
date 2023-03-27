@@ -39,12 +39,15 @@ Run `terraform destroy` when you don't need these resources.
 | <a name="module_cluster_autoscaler_irsa"></a> [cluster\_autoscaler\_irsa](#module\_cluster\_autoscaler\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_disabled"></a> [disabled](#module\_disabled) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_ebs_csi_irsa"></a> [ebs\_csi\_irsa](#module\_ebs\_csi\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
+| <a name="module_ebs_csi_irsa_v2"></a> [ebs\_csi\_irsa\_v2](#module\_ebs\_csi\_irsa\_v2) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_efs_csi_irsa"></a> [efs\_csi\_irsa](#module\_efs\_csi\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | ~> 19.10 |
 | <a name="module_external_dns_irsa"></a> [external\_dns\_irsa](#module\_external\_dns\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_external_secrets_irsa"></a> [external\_secrets\_irsa](#module\_external\_secrets\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_fsx_lustre_csi_irsa"></a> [fsx\_lustre\_csi\_irsa](#module\_fsx\_lustre\_csi\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_irsa"></a> [irsa](#module\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
+| <a name="module_irsa_v2_custom_policy"></a> [irsa\_v2\_custom\_policy](#module\_irsa\_v2\_custom\_policy) | ../../modules/iam-role-for-service-accounts | n/a |
+| <a name="module_irsa_v2_empty"></a> [irsa\_v2\_empty](#module\_irsa\_v2\_empty) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_karpenter_irsa"></a> [karpenter\_irsa](#module\_karpenter\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_load_balancer_controller_irsa"></a> [load\_balancer\_controller\_irsa](#module\_load\_balancer\_controller\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
 | <a name="module_load_balancer_controller_targetgroup_binding_only_irsa"></a> [load\_balancer\_controller\_targetgroup\_binding\_only\_irsa](#module\_load\_balancer\_controller\_targetgroup\_binding\_only\_irsa) | ../../modules/iam-role-for-service-accounts | n/a |
@@ -70,6 +73,8 @@ No inputs.
 | Name | Description |
 |------|-------------|
 | <a name="output_irsa_arn"></a> [irsa\_arn](#output\_irsa\_arn) | ARN of IAM role |
+| <a name="output_irsa_iam_policy"></a> [irsa\_iam\_policy](#output\_irsa\_iam\_policy) | The policy document |
+| <a name="output_irsa_iam_policy_arn"></a> [irsa\_iam\_policy\_arn](#output\_irsa\_iam\_policy\_arn) | The ARN assigned by AWS to this policy |
 | <a name="output_irsa_name"></a> [irsa\_name](#output\_irsa\_name) | Name of IAM role |
 | <a name="output_irsa_path"></a> [irsa\_path](#output\_irsa\_path) | Path of IAM role |
 | <a name="output_irsa_unique_id"></a> [irsa\_unique\_id](#output\_irsa\_unique\_id) | Unique ID of IAM role |
